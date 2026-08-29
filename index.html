@@ -4,6 +4,25 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Brain Lab - 1 Player Arcade</title>
+
+    <!-- PWA Integration -->
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#8b5cf6">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <link rel="apple-touch-icon" href="https://cdn-icons-png.flaticon.com/512/3079/3079166.png">
+
+    <!-- Register Service Worker (Guarded for http/https protocols) -->
+    <script>
+      if ('serviceWorker' in navigator && (window.location.protocol === 'https:' || window.location.protocol === 'http:')) {
+        window.addEventListener('load', () => {
+          navigator.serviceWorker.register('./sw.js')
+            .then(reg => console.log('Service Worker Registered!', reg))
+            .catch(err => console.error('SW Registration Failed:', err));
+        });
+      }
+    </script>
+
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- FontAwesome Icons -->
@@ -552,7 +571,6 @@
                     osc.start(now);
                     osc.stop(now + 0.05);
                 } else if (type === 'fanfare') {
-                    // Multi-step victory chord
                     const notes = [523.25, 659.25, 783.99, 1046.50];
                     notes.forEach((freq, idx) => {
                         const o = audioCtx.createOscillator();
@@ -611,7 +629,7 @@
                 particles.forEach(p => {
                     p.x += p.vx;
                     p.y += p.vy;
-                    p.vy += 0.4; // gravity
+                    p.vy += 0.4;
                     p.rotation += p.rSpeed;
 
                     ctx.save();
@@ -1002,7 +1020,6 @@
 
                 renderGrid();
 
-                // Flash active pattern
                 setTimeout(() => {
                     const tiles = document.querySelectorAll('#mem-grid button');
                     activePattern.forEach(idx => {
@@ -1186,7 +1203,7 @@
 
                 const target = document.createElement('button');
                 const isGold = Math.random() < 0.2;
-                const size = Math.floor(Math.random() * 25) + 40; // 40px to 65px
+                const size = Math.floor(Math.random() * 25) + 40;
 
                 const maxX = arena.clientWidth - size - 20;
                 const maxY = arena.clientHeight - size - 20;
@@ -1217,7 +1234,6 @@
 
                 arena.appendChild(target);
 
-                // Auto remove target after lifespan
                 setTimeout(() => {
                     if (target.parentNode) target.remove();
                 }, 1400);
