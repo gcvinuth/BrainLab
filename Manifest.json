@@ -1,0 +1,24 @@
+{
+  "name": "Brain Lab - 1 Player Arcade",
+  "short_name": "Brain Lab",
+  "description": "Fun cognitive mini-games: Mental Math, Memory Matrix, 3D Spatial Visualizer, Sudoku, Reaction Speed, and more!",
+  "start_url": "./index.html",
+  "display": "standalone",
+  "background_color": "#020617",
+  "theme_color": "#8b5cf6",
+  "orientation": "portrait",
+  "icons": [
+    {
+      "src": "https://cdn-icons-png.flaticon.com/512/3079/3079166.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "https://cdn-icons-png.flaticon.com/512/3079/3079166.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}
