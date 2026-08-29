@@ -1,0 +1,1842 @@
+<!DOCTYPE html>
+<html lang="en" class="h-full bg-slate-950 text-slate-100">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Brain Lab - 1 Player Arcade</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts: Fredoka & Inter -->
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
+    <!-- Three.js for 3D Spatial Visualizer -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                        display: ['Fredoka', 'cursive'],
+                    },
+                    colors: {
+                        brand: {
+                            purple: '#8b5cf6',
+                            pink: '#ec4899',
+                            cyan: '#06b6d4',
+                            amber: '#f59e0b',
+                            emerald: '#10b981',
+                            rose: '#f43f5e'
+                        }
+                    },
+                    animation: {
+                        'bounce-short': 'bounceShort 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275) 1',
+                        'pulse-glow': 'pulseGlow 2s infinite',
+                        'pop-in': 'popIn 0.3s cubic-bezier(0.34, 1.56, 0.64, 1) forwards',
+                        'float-up': 'floatUp 0.8s ease-out forwards',
+                        'shake': 'shake 0.4s ease-in-out',
+                    },
+                    keyframes: {
+                        bounceShort: {
+                            '0%': { transform: 'scale(0.8)', opacity: '0' },
+                            '70%': { transform: 'scale(1.05)', opacity: '1' },
+                            '100%': { transform: 'scale(1)' }
+                        },
+                        popIn: {
+                            '0%': { transform: 'scale(0.5)', opacity: '0' },
+                            '100%': { transform: 'scale(1)', opacity: '1' }
+                        },
+                        pulseGlow: {
+                            '0%, 100%': { boxShadow: '0 0 15px rgba(139, 92, 246, 0.4)' },
+                            '50%': { boxShadow: '0 0 30px rgba(236, 72, 153, 0.7)' }
+                        },
+                        floatUp: {
+                            '0%': { opacity: '1', transform: 'translateY(0) scale(1)' },
+                            '100%': { opacity: '0', transform: 'translateY(-40px) scale(1.2)' }
+                        },
+                        shake: {
+                            '0%, 100%': { transform: 'translateX(0)' },
+                            '20%, 60%': { transform: 'translateX(-8px)' },
+                            '40%, 80%': { transform: 'translateX(8px)' }
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        body {
+            font-family: 'Fredoka', cursive;
+            user-select: none;
+            -webkit-user-select: none;
+            touch-action: manipulation;
+        }
+
+        .glass-panel {
+            background: rgba(30, 41, 59, 0.75);
+            backdrop-filter: blur(14px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .arcade-btn {
+            transition: all 0.15s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .arcade-btn:active {
+            transform: translateY(3px) scale(0.97);
+        }
+
+        .no-scrollbar::-webkit-scrollbar { display: none; }
+        .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+
+        .sudoku-grid {
+            display: grid;
+            grid-template-columns: repeat(9, minmax(0, 1fr));
+        }
+
+        /* Floating +Score animation helper */
+        .floating-score {
+            position: absolute;
+            pointer-events: none;
+            font-weight: 800;
+            z-index: 50;
+            animation: floatUp 0.8s ease-out forwards;
+        }
+
+        /* Confetti canvas */
+        #confetti-canvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            pointer-events: none;
+            z-index: 100;
+        }
+    </style>
+</head>
+<body class="h-full flex flex-col bg-slate-950 text-slate-100 overflow-x-hidden selection:bg-purple-500 selection:text-white">
+
+    <!-- Canvas for Victory Confetti Animation -->
+    <canvas id="confetti-canvas"></canvas>
+
+    <!-- Top Navigation Header -->
+    <header class="w-full glass-panel sticky top-0 z-30 px-4 py-3 flex items-center justify-between border-b border-slate-800">
+        <div class="flex items-center space-x-3 cursor-pointer" onclick="switchView('hub')">
+            <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-purple-600 via-pink-500 to-amber-400 flex items-center justify-center shadow-lg shadow-purple-500/30 animate-pulse-glow">
+                <i class="fa-solid font-bold fa-brain text-white text-xl"></i>
+            </div>
+            <div>
+                <h1 class="text-xl font-bold tracking-wider bg-clip-text text-transparent bg-gradient-to-r from-purple-400 via-pink-400 to-amber-300">
+                    BRAIN LAB
+                </h1>
+                <p class="text-[10px] text-slate-400 -mt-1 font-sans tracking-widest uppercase">1-Player Mind Arcade</p>
+            </div>
+        </div>
+
+        <div class="flex items-center space-x-3">
+            <div class="flex items-center bg-slate-900/90 px-3 py-1.5 rounded-full border border-slate-800 shadow-inner">
+                <i class="fa-solid fa-trophy text-amber-400 mr-2 text-sm"></i>
+                <span id="global-score" class="font-bold text-amber-300 text-sm">0</span>
+            </div>
+            <button id="sound-btn" onclick="toggleAudio()" class="w-9 h-9 rounded-full bg-slate-800 hover:bg-slate-700 border border-slate-700 flex items-center justify-center text-slate-300 transition active:scale-95">
+                <i class="fa-solid fa-volume-high" id="sound-icon"></i>
+            </button>
+        </div>
+    </header>
+
+    <!-- MAIN HUB VIEW -->
+    <main id="view-hub" class="flex-1 max-w-6xl w-full mx-auto p-4 md:p-6 flex flex-col gap-6">
+        
+        <!-- Hero Banner -->
+        <div class="relative overflow-hidden rounded-3xl bg-gradient-to-r from-purple-900/40 via-slate-900 to-pink-900/40 border border-purple-500/20 p-6 md:p-8 flex flex-col md:flex-row items-center justify-between gap-6 shadow-2xl">
+            <div class="space-y-2 text-center md:text-left z-10">
+                <span class="px-3 py-1 rounded-full bg-purple-500/20 text-purple-300 border border-purple-500/30 text-xs font-semibold uppercase tracking-widest">
+                    🔥 9 Mind Arcade Games
+                </span>
+                <h2 class="text-2xl md:text-4xl font-extrabold text-white tracking-tight">Level Up Your Mind</h2>
+                <p class="text-slate-300 max-w-md font-sans text-xs md:text-sm">Test memory, reflexes, logic, math, pathfinding, and 3D visual processing. Earn stars and set global high scores!</p>
+            </div>
+            <div class="flex gap-3 z-10">
+                <div class="text-center bg-slate-900/90 p-3 px-5 rounded-2xl border border-slate-800 shadow-inner">
+                    <div class="text-[10px] text-slate-400 uppercase tracking-widest">Brain Score</div>
+                    <div id="iq-level" class="text-2xl font-black text-pink-400">100</div>
+                </div>
+                <div class="text-center bg-slate-900/90 p-3 px-5 rounded-2xl border border-slate-800 shadow-inner">
+                    <div class="text-[10px] text-slate-400 uppercase tracking-widest">Played</div>
+                    <div id="games-played" class="text-2xl font-black text-purple-400">0</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Game Cards Grid -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
+
+            <!-- 1. Mental Math Card -->
+            <div class="glass-panel rounded-3xl p-5 flex flex-col justify-between border-t-4 border-t-amber-500 hover:border-amber-400 transition-all duration-300 hover:-translate-y-1 group shadow-lg">
+                <div>
+                    <div class="flex justify-between items-start mb-4">
+                        <div class="w-13 h-13 p-3 rounded-2xl bg-amber-500/20 border border-amber-500/30 flex items-center justify-center text-amber-400 text-2xl group-hover:scale-110 transition-transform">
+                            <i class="fa-solid fa-calculator"></i>
+                        </div>
+                        <button onclick="openHowToPlay('math')" class="text-xs bg-slate-800 hover:bg-slate-700 text-slate-300 px-3 py-1.5 rounded-xl border border-slate-700 flex items-center space-x-1">
+                            <i class="fa-solid fa-circle-info"></i>
+                            <span>How To Play</span>
+                        </button>
+                    </div>
+                    <h3 class="text-xl font-bold text-white mb-1">Mental Math Blitz</h3>
+                    <p class="text-slate-400 text-xs font-sans mb-4">Solve rapid arithmetic equations under pressure before time runs out!</p>
+                </div>
+                <div class="pt-4 border-t border-slate-800/80 flex items-center justify-between">
+                    <div class="text-xs text-slate-400">Best: <span id="high-math" class="text-amber-400 font-bold">0</span></div>
+                    <button onclick="startMathGame()" class="arcade-btn px-5 py-2.5 rounded-xl bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-400 hover:to-amber-500 text-slate-950 font-bold text-sm shadow-lg shadow-amber-500/20 flex items-center space-x-2">
+                        <span>Play</span>
+                        <i class="fa-solid fa-play text-xs"></i>
+                    </button>
+                </div>
+            </div>
+
+            <!-- 2. Memory Matrix Card -->
+            <div class="glass-panel rounded-3xl p-5 flex flex-col justify-between border-t-4 border-t-purple-500 hover:border-purple-400 transition-all duration-300 hover:-translate-y-1 group shadow-lg">
+                <div>
+                    <div class="flex justify-between items-start mb-4">
+                        <div class="w-13 h-13 p-3 rounded-2xl bg-purple-500/20 border border-purple-500/30 flex items-center justify-center text-purple-400 text-2xl group-hover:scale-110 transition-transform">
+                            <i class="fa-solid fa-border-all"></i>
+                        </div>
+                        <button onclick="openHowToPlay('memory')" class="text-xs bg-slate-800 hover:bg-slate-700 text-slate-300 px-3 py-1.5 rounded-xl border border-slate-700 flex items-center space-x-1">
+                            <i class="fa-solid fa-circle-info"></i>
+                            <span>How To Play</span>
+                        </button>
+                    </div>
+                    <h3 class="text-xl font-bold text-white mb-1">Memory Matrix</h3>
+                    <p class="text-slate-400 text-xs font-sans mb-4">Memorize glowing grid tiles and recreate the flash pattern sequence!</p>
+                </div>
+                <div class="pt-4 border-t border-slate-800/80 flex items-center justify-between">
+                    <div class="text-xs text-slate-400">Best: <span id="high-memory" class="text-purple-400 font-bold">0</span></div>
+                    <button onclick="startMemoryGame()" class="arcade-btn px-5 py-2.5 rounded-xl bg-gradient-to-r from-purple-500 to-purple-600 hover:from-purple-400 hover:to-purple-500 text-white font-bold text-sm shadow-lg shadow-purple-500/20 flex items-center space-x-2">
+                        <span>Play</span>
+                        <i class="fa-solid fa-play text-xs"></i>
+                    </button>
+                </div>
+            </div>
+
+            <!-- 3. Stroop Color Switch Card -->
+            <div class="glass-panel rounded-3xl p-5 flex flex-col justify-between border-t-4 border-t-rose-500 hover:border-rose-400 transition-all duration-300 hover:-translate-y-1 group shadow-lg">
+                <div>
+                    <div class="flex justify-between items-start mb-4">
+                        <div class="w-13 h-13 p-3 rounded-2xl bg-rose-500/20 border border-rose-500/30 flex items-center justify-center text-rose-400 text-2xl group-hover:scale-110 transition-transform">
+                            <i class="fa-solid fa-palette"></i>
+                        </div>
+                        <button onclick="openHowToPlay('stroop')" class="text-xs bg-slate-800 hover:bg-slate-700 text-slate-300 px-3 py-1.5 rounded-xl border border-slate-700 flex items-center space-x-1">
+                            <i class="fa-solid fa-circle-info"></i>
+                            <span>How To Play</span>
+                        </button>
+                    </div>
+                    <h3 class="text-xl font-bold text-white mb-1">Stroop Color Match</h3>
+                    <p class="text-slate-400 text-xs font-sans mb-4">Does the written color word match the ink color? Rapid brain switch test!</p>
+                </div>
+                <div class="pt-4 border-t border-slate-800/80 flex items-center justify-between">
+                    <div class="text-xs text-slate-400">Best: <span id="high-stroop" class="text-rose-400 font-bold">0</span></div>
+                    <button onclick="startStroopGame()" class="arcade-btn px-5 py-2.5 rounded-xl bg-gradient-to-r from-rose-500 to-rose-600 hover:from-rose-400 hover:to-rose-500 text-white font-bold text-sm shadow-lg shadow-rose-500/20 flex items-center space-x-2">
+                        <span>Play</span>
+                        <i class="fa-solid fa-play text-xs"></i>
+                    </button>
+                </div>
+            </div>
+
+            <!-- 4. Precision Target Blitz Card -->
+            <div class="glass-panel rounded-3xl p-5 flex flex-col justify-between border-t-4 border-t-cyan-500 hover:border-cyan-400 transition-all duration-300 hover:-translate-y-1 group shadow-lg">
+                <div>
+                    <div class="flex justify-between items-start mb-4">
+                        <div class="w-13 h-13 p-3 rounded-2xl bg-cyan-500/20 border border-cyan-500/30 flex items-center justify-center text-cyan-400 text-2xl group-hover:scale-110 transition-transform">
+                            <i class="fa-solid fa-bullseye"></i>
+                        </div>
+                        <button onclick="openHowToPlay('target')" class="text-xs bg-slate-800 hover:bg-slate-700 text-slate-300 px-3 py-1.5 rounded-xl border border-slate-700 flex items-center space-x-1">
+                            <i class="fa-solid fa-circle-info"></i>
+                            <span>How To Play</span>
+                        </button>
+                    </div>
+                    <h3 class="text-xl font-bold text-white mb-1">Target Precision</h3>
+                    <p class="text-slate-400 text-xs font-sans mb-4">Tap shrinking targets as fast as possible to build ultimate aiming speed!</p>
+                </div>
+                <div class="pt-4 border-t border-slate-800/80 flex items-center justify-between">
+                    <div class="text-xs text-slate-400">Best: <span id="high-target" class="text-cyan-400 font-bold">0</span></div>
+                    <button onclick="startTargetGame()" class="arcade-btn px-5 py-2.5 rounded-xl bg-gradient-to-r from-cyan-500 to-cyan-600 hover:from-cyan-400 hover:to-cyan-500 text-slate-950 font-bold text-sm shadow-lg shadow-cyan-500/20 flex items-center space-x-2">
+                        <span>Play</span>
+                        <i class="fa-solid fa-play text-xs"></i>
+                    </button>
+                </div>
+            </div>
+
+            <!-- 5. Reaction Speed Card -->
+            <div class="glass-panel rounded-3xl p-5 flex flex-col justify-between border-t-4 border-t-pink-500 hover:border-pink-400 transition-all duration-300 hover:-translate-y-1 group shadow-lg">
+                <div>
+                    <div class="flex justify-between items-start mb-4">
+                        <div class="w-13 h-13 p-3 rounded-2xl bg-pink-500/20 border border-pink-500/30 flex items-center justify-center text-pink-400 text-2xl group-hover:scale-110 transition-transform">
+                            <i class="fa-solid fa-bolt"></i>
+                        </div>
+                        <button onclick="openHowToPlay('reaction')" class="text-xs bg-slate-800 hover:bg-slate-700 text-slate-300 px-3 py-1.5 rounded-xl border border-slate-700 flex items-center space-x-1">
+                            <i class="fa-solid fa-circle-info"></i>
+                            <span>How To Play</span>
+                        </button>
+                    </div>
+                    <h3 class="text-xl font-bold text-white mb-1">Reaction Speed</h3>
+                    <p class="text-slate-400 text-xs font-sans mb-4">Test your lightning reflex timing in milliseconds!</p>
+                </div>
+                <div class="pt-4 border-t border-slate-800/80 flex items-center justify-between">
+                    <div class="text-xs text-slate-400">Best: <span id="high-reaction" class="text-pink-400 font-bold">-- ms</span></div>
+                    <button onclick="startReactionGame()" class="arcade-btn px-5 py-2.5 rounded-xl bg-gradient-to-r from-pink-500 to-pink-600 hover:from-pink-400 hover:to-pink-500 text-white font-bold text-sm shadow-lg shadow-pink-500/20 flex items-center space-x-2">
+                        <span>Play</span>
+                        <i class="fa-solid fa-play text-xs"></i>
+                    </button>
+                </div>
+            </div>
+
+            <!-- 6. 3D Spatial Visualizer Card -->
+            <div class="glass-panel rounded-3xl p-5 flex flex-col justify-between border-t-4 border-t-cyan-400 hover:border-cyan-300 transition-all duration-300 hover:-translate-y-1 group shadow-lg">
+                <div>
+                    <div class="flex justify-between items-start mb-4">
+                        <div class="w-13 h-13 p-3 rounded-2xl bg-cyan-400/20 border border-cyan-400/30 flex items-center justify-center text-cyan-300 text-2xl group-hover:scale-110 transition-transform">
+                            <i class="fa-solid fa-cubes-stacked"></i>
+                        </div>
+                        <button onclick="openHowToPlay('spatial')" class="text-xs bg-slate-800 hover:bg-slate-700 text-slate-300 px-3 py-1.5 rounded-xl border border-slate-700 flex items-center space-x-1">
+                            <i class="fa-solid fa-circle-info"></i>
+                            <span>How To Play</span>
+                        </button>
+                    </div>
+                    <h3 class="text-xl font-bold text-white mb-1">3D Cube Visualizer</h3>
+                    <p class="text-slate-400 text-xs font-sans mb-4">Rotate 3D structures in full space to count hidden blocks!</p>
+                </div>
+                <div class="pt-4 border-t border-slate-800/80 flex items-center justify-between">
+                    <div class="text-xs text-slate-400">Best: <span id="high-spatial" class="text-cyan-300 font-bold">0</span></div>
+                    <button onclick="startSpatialGame()" class="arcade-btn px-5 py-2.5 rounded-xl bg-gradient-to-r from-cyan-400 to-cyan-500 hover:from-cyan-300 hover:to-cyan-400 text-slate-950 font-bold text-sm shadow-lg shadow-cyan-400/20 flex items-center space-x-2">
+                        <span>Play</span>
+                        <i class="fa-solid fa-play text-xs"></i>
+                    </button>
+                </div>
+            </div>
+
+            <!-- 7. Sudoku Card -->
+            <div class="glass-panel rounded-3xl p-5 flex flex-col justify-between border-t-4 border-t-indigo-500 hover:border-indigo-400 transition-all duration-300 hover:-translate-y-1 group shadow-lg">
+                <div>
+                    <div class="flex justify-between items-start mb-4">
+                        <div class="w-13 h-13 p-3 rounded-2xl bg-indigo-500/20 border border-indigo-500/30 flex items-center justify-center text-indigo-400 text-2xl group-hover:scale-110 transition-transform">
+                            <i class="fa-solid fa-table-cells"></i>
+                        </div>
+                        <button onclick="openHowToPlay('sudoku')" class="text-xs bg-slate-800 hover:bg-slate-700 text-slate-300 px-3 py-1.5 rounded-xl border border-slate-700 flex items-center space-x-1">
+                            <i class="fa-solid fa-circle-info"></i>
+                            <span>How To Play</span>
+                        </button>
+                    </div>
+                    <h3 class="text-xl font-bold text-white mb-1">Sudoku Master</h3>
+                    <p class="text-slate-400 text-xs font-sans mb-4">Fill numbers 1-9 without repeating in rows, columns, or 3x3 boxes.</p>
+                </div>
+                <div class="pt-4 border-t border-slate-800/80 flex items-center justify-between">
+                    <div class="text-xs text-slate-400">Best: <span id="high-sudoku" class="text-indigo-400 font-bold">0</span></div>
+                    <button onclick="startSudokuGame()" class="arcade-btn px-5 py-2.5 rounded-xl bg-gradient-to-r from-indigo-500 to-indigo-600 hover:from-indigo-400 hover:to-indigo-500 text-white font-bold text-sm shadow-lg shadow-indigo-500/20 flex items-center space-x-2">
+                        <span>Play</span>
+                        <i class="fa-solid fa-play text-xs"></i>
+                    </button>
+                </div>
+            </div>
+
+            <!-- 8. Hidato Path Card -->
+            <div class="glass-panel rounded-3xl p-5 flex flex-col justify-between border-t-4 border-t-emerald-500 hover:border-emerald-400 transition-all duration-300 hover:-translate-y-1 group shadow-lg">
+                <div>
+                    <div class="flex justify-between items-start mb-4">
+                        <div class="w-13 h-13 p-3 rounded-2xl bg-emerald-500/20 border border-emerald-500/30 flex items-center justify-center text-emerald-400 text-2xl group-hover:scale-110 transition-transform">
+                            <i class="fa-solid fa-route"></i>
+                        </div>
+                        <button onclick="openHowToPlay('hidato')" class="text-xs bg-slate-800 hover:bg-slate-700 text-slate-300 px-3 py-1.5 rounded-xl border border-slate-700 flex items-center space-x-1">
+                            <i class="fa-solid fa-circle-info"></i>
+                            <span>How To Play</span>
+                        </button>
+                    </div>
+                    <h3 class="text-xl font-bold text-white mb-1">Hidato Grid Path</h3>
+                    <p class="text-slate-400 text-xs font-sans mb-4">Connect sequential numbers in a continuous adjacent snake path.</p>
+                </div>
+                <div class="pt-4 border-t border-slate-800/80 flex items-center justify-between">
+                    <div class="text-xs text-slate-400">Best: <span id="high-hidato" class="text-emerald-400 font-bold">0</span></div>
+                    <button onclick="startHidatoGame()" class="arcade-btn px-5 py-2.5 rounded-xl bg-gradient-to-r from-emerald-500 to-emerald-600 hover:from-emerald-400 hover:to-emerald-500 text-slate-950 font-bold text-sm shadow-lg shadow-emerald-500/20 flex items-center space-x-2">
+                        <span>Play</span>
+                        <i class="fa-solid fa-play text-xs"></i>
+                    </button>
+                </div>
+            </div>
+
+            <!-- 9. Sequence Digit Memory Card -->
+            <div class="glass-panel rounded-3xl p-5 flex flex-col justify-between border-t-4 border-t-blue-500 hover:border-blue-400 transition-all duration-300 hover:-translate-y-1 group shadow-lg">
+                <div>
+                    <div class="flex justify-between items-start mb-4">
+                        <div class="w-13 h-13 p-3 rounded-2xl bg-blue-500/20 border border-blue-500/30 flex items-center justify-center text-blue-400 text-2xl group-hover:scale-110 transition-transform">
+                            <i class="fa-solid fa-arrow-down-1-9"></i>
+                        </div>
+                        <button onclick="openHowToPlay('sequence')" class="text-xs bg-slate-800 hover:bg-slate-700 text-slate-300 px-3 py-1.5 rounded-xl border border-slate-700 flex items-center space-x-1">
+                            <i class="fa-solid fa-circle-info"></i>
+                            <span>How To Play</span>
+                        </button>
+                    </div>
+                    <h3 class="text-xl font-bold text-white mb-1">Digit Sequence</h3>
+                    <p class="text-slate-400 text-xs font-sans mb-4">Memorize longer digit numbers and type them back perfectly!</p>
+                </div>
+                <div class="pt-4 border-t border-slate-800/80 flex items-center justify-between">
+                    <div class="text-xs text-slate-400">Best: <span id="high-sequence" class="text-blue-400 font-bold">0 Digits</span></div>
+                    <button onclick="startSequenceGame()" class="arcade-btn px-5 py-2.5 rounded-xl bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-400 hover:to-blue-500 text-white font-bold text-sm shadow-lg shadow-blue-500/20 flex items-center space-x-2">
+                        <span>Play</span>
+                        <i class="fa-solid fa-play text-xs"></i>
+                    </button>
+                </div>
+            </div>
+
+        </div>
+    </main>
+
+    <!-- GAME CONTAINER VIEW -->
+    <main id="view-game" class="hidden flex-1 max-w-4xl w-full mx-auto p-4 flex flex-col">
+        <!-- Top bar inside game -->
+        <div class="flex items-center justify-between mb-4 glass-panel p-3 rounded-2xl border border-slate-800">
+            <button onclick="switchView('hub')" class="arcade-btn px-4 py-2 bg-slate-800 hover:bg-slate-700 text-slate-200 rounded-xl text-xs font-bold flex items-center space-x-2">
+                <i class="fa-solid fa-arrow-left"></i>
+                <span>Hub</span>
+            </button>
+            <h2 id="game-title" class="text-lg md:text-xl font-bold text-white text-center">Game Title</h2>
+            <button id="btn-how-to-play-in-game" class="arcade-btn px-3 py-2 bg-slate-800 hover:bg-slate-700 text-slate-300 rounded-xl text-xs font-semibold flex items-center space-x-1">
+                <i class="fa-solid fa-circle-question text-purple-400"></i>
+                <span class="hidden sm:inline">How To Play</span>
+            </button>
+        </div>
+
+        <!-- Game Active Stage -->
+        <div id="game-stage" class="flex-1 glass-panel rounded-3xl p-4 md:p-6 flex flex-col items-center justify-center relative overflow-hidden">
+            <!-- Dynamic Content loaded per game -->
+        </div>
+    </main>
+
+    <!-- HOW TO PLAY MODAL -->
+    <div id="modal-how-to-play" class="fixed inset-0 bg-slate-950/80 backdrop-blur-md z-50 hidden flex items-center justify-center p-4">
+        <div class="glass-panel max-w-md w-full rounded-3xl p-6 border border-slate-700 shadow-2xl relative animate-bounce-short">
+            <button onclick="closeModal('modal-how-to-play')" class="absolute top-4 right-4 text-slate-400 hover:text-white w-8 h-8 rounded-full bg-slate-800 flex items-center justify-center">
+                <i class="fa-solid fa-xmark"></i>
+            </button>
+            
+            <div class="flex items-center space-x-3 mb-4">
+                <div id="modal-icon" class="w-12 h-12 rounded-2xl bg-purple-500/20 text-purple-400 text-2xl flex items-center justify-center border border-purple-500/30">
+                    <i class="fa-solid fa-circle-info"></i>
+                </div>
+                <div>
+                    <h3 id="modal-title" class="text-xl font-bold text-white">How To Play</h3>
+                    <p class="text-xs text-slate-400 font-sans">Quick Rules & Controls</p>
+                </div>
+            </div>
+
+            <div id="modal-body" class="text-slate-300 text-sm font-sans space-y-3 leading-relaxed border-t border-slate-800 pt-4">
+                <!-- Instruction details inserted dynamically -->
+            </div>
+
+            <button onclick="closeModal('modal-how-to-play')" class="w-full mt-6 py-3 rounded-2xl bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-500 hover:to-pink-500 text-white font-bold text-sm shadow-lg shadow-purple-500/30 active:scale-95 transition">
+                Got It, Let's Play!
+            </button>
+        </div>
+    </div>
+
+    <!-- HIGH ENERGY RESULTS MODAL -->
+    <div id="modal-results" class="fixed inset-0 bg-slate-950/85 backdrop-blur-md z-50 hidden flex items-center justify-center p-4">
+        <div class="glass-panel max-w-sm w-full rounded-3xl p-6 border border-slate-700 shadow-2xl text-center space-y-4 animate-pop-in relative overflow-hidden">
+            
+            <!-- Dynamic Star Rating -->
+            <div id="results-stars" class="flex justify-center space-x-2 text-2xl text-amber-400">
+                <i class="fa-solid fa-star"></i>
+                <i class="fa-solid fa-star"></i>
+                <i class="fa-solid fa-star"></i>
+            </div>
+
+            <div class="w-16 h-16 rounded-3xl bg-amber-500/20 text-amber-400 text-3xl mx-auto flex items-center justify-center border border-amber-500/30 animate-pulse">
+                <i class="fa-solid fa-trophy"></i>
+            </div>
+            
+            <h3 id="result-header" class="text-2xl font-extrabold text-white">Stage Complete!</h3>
+            
+            <div class="bg-slate-900/90 p-4 rounded-2xl border border-slate-800 space-y-2 font-sans shadow-inner">
+                <div class="flex justify-between text-sm text-slate-400">
+                    <span>Score / Stat:</span>
+                    <span id="result-score" class="text-white font-extrabold text-lg">0</span>
+                </div>
+                <div class="flex justify-between text-sm text-slate-400">
+                    <span>Personal Best:</span>
+                    <span id="result-best" class="text-amber-400 font-bold">0</span>
+                </div>
+            </div>
+
+            <div class="flex space-x-3 pt-2">
+                <button onclick="closeModal('modal-results'); switchView('hub');" class="flex-1 py-3 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 font-bold text-sm active:scale-95 transition">
+                    Hub
+                </button>
+                <button id="btn-replay" class="flex-1 py-3 rounded-xl bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-500 hover:to-pink-500 text-white font-bold text-sm shadow-lg shadow-purple-500/30 active:scale-95 transition">
+                    Play Again
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // GLOBAL APP STATE & PERSISTENCE
+        let soundEnabled = true;
+        let audioCtx = null;
+        let activeGame = null;
+
+        const appState = {
+            scores: {
+                math: parseInt(localStorage.getItem('bl_math') || 0),
+                memory: parseInt(localStorage.getItem('bl_memory') || 0),
+                stroop: parseInt(localStorage.getItem('bl_stroop') || 0),
+                target: parseInt(localStorage.getItem('bl_target') || 0),
+                sudoku: parseInt(localStorage.getItem('bl_sudoku') || 0),
+                hidato: parseInt(localStorage.getItem('bl_hidato') || 0),
+                reaction: parseInt(localStorage.getItem('bl_reaction') || 0),
+                spatial: parseInt(localStorage.getItem('bl_spatial') || 0),
+                sequence: parseInt(localStorage.getItem('bl_sequence') || 0)
+            },
+            played: parseInt(localStorage.getItem('bl_played') || 0)
+        };
+
+        // Synthesizer SFX Engine
+        function playSound(type, combo = 0) {
+            if (!soundEnabled) return;
+            try {
+                if (!audioCtx) {
+                    audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+                }
+                if (audioCtx.state === 'suspended') {
+                    audioCtx.resume();
+                }
+
+                const osc = audioCtx.createOscillator();
+                const gain = audioCtx.createGain();
+                osc.connect(gain);
+                gain.connect(audioCtx.destination);
+                const now = audioCtx.currentTime;
+
+                if (type === 'click') {
+                    osc.frequency.setValueAtTime(450, now);
+                    osc.frequency.exponentialRampToValueAtTime(850, now + 0.04);
+                    gain.gain.setValueAtTime(0.12, now);
+                    gain.gain.exponentialRampToValueAtTime(0.01, now + 0.04);
+                    osc.start(now);
+                    osc.stop(now + 0.04);
+                } else if (type === 'correct') {
+                    const baseFreq = 523.25 + (combo * 40); // Pitch scales with combo!
+                    osc.frequency.setValueAtTime(baseFreq, now);
+                    osc.frequency.setValueAtTime(baseFreq * 1.25, now + 0.08);
+                    gain.gain.setValueAtTime(0.18, now);
+                    gain.gain.exponentialRampToValueAtTime(0.01, now + 0.25);
+                    osc.start(now);
+                    osc.stop(now + 0.25);
+                } else if (type === 'error') {
+                    osc.type = 'sawtooth';
+                    osc.frequency.setValueAtTime(190, now);
+                    osc.frequency.linearRampToValueAtTime(120, now + 0.18);
+                    gain.gain.setValueAtTime(0.18, now);
+                    gain.gain.exponentialRampToValueAtTime(0.01, now + 0.18);
+                    osc.start(now);
+                    osc.stop(now + 0.18);
+                } else if (type === 'pop') {
+                    osc.frequency.setValueAtTime(700, now);
+                    osc.frequency.exponentialRampToValueAtTime(1400, now + 0.05);
+                    gain.gain.setValueAtTime(0.15, now);
+                    gain.gain.exponentialRampToValueAtTime(0.01, now + 0.05);
+                    osc.start(now);
+                    osc.stop(now + 0.05);
+                } else if (type === 'fanfare') {
+                    // Multi-step victory chord
+                    const notes = [523.25, 659.25, 783.99, 1046.50];
+                    notes.forEach((freq, idx) => {
+                        const o = audioCtx.createOscillator();
+                        const g = audioCtx.createGain();
+                        o.connect(g);
+                        g.connect(audioCtx.destination);
+                        o.frequency.setValueAtTime(freq, now + idx * 0.09);
+                        g.gain.setValueAtTime(0.15, now + idx * 0.09);
+                        g.gain.exponentialRampToValueAtTime(0.01, now + idx * 0.09 + 0.3);
+                        o.start(now + idx * 0.09);
+                        o.stop(now + idx * 0.09 + 0.3);
+                    });
+                }
+            } catch (e) {
+                console.log("Audio synth note error", e);
+            }
+        }
+
+        function toggleAudio() {
+            soundEnabled = !soundEnabled;
+            const icon = document.getElementById('sound-icon');
+            if (soundEnabled) {
+                icon.className = 'fa-solid fa-volume-high';
+                playSound('click');
+            } else {
+                icon.className = 'fa-solid fa-volume-xmark text-slate-500';
+            }
+        }
+
+        // Particle Confetti Engine
+        function triggerConfetti() {
+            const canvas = document.getElementById('confetti-canvas');
+            const ctx = canvas.getContext('2d');
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+
+            const particles = [];
+            const colors = ['#8b5cf6', '#ec4899', '#06b6d4', '#f59e0b', '#10b981', '#ffffff'];
+
+            for (let i = 0; i < 70; i++) {
+                particles.push({
+                    x: canvas.width / 2,
+                    y: canvas.height / 2 - 50,
+                    vx: (Math.random() - 0.5) * 14,
+                    vy: (Math.random() - 0.7) * 16,
+                    size: Math.random() * 8 + 4,
+                    color: colors[Math.floor(Math.random() * colors.length)],
+                    rotation: Math.random() * 360,
+                    rSpeed: (Math.random() - 0.5) * 10
+                });
+            }
+
+            let frames = 0;
+            function render() {
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+                particles.forEach(p => {
+                    p.x += p.vx;
+                    p.y += p.vy;
+                    p.vy += 0.4; // gravity
+                    p.rotation += p.rSpeed;
+
+                    ctx.save();
+                    ctx.translate(p.x, p.y);
+                    ctx.rotate((p.rotation * Math.PI) / 180);
+                    ctx.fillStyle = p.color;
+                    ctx.fillRect(-p.size / 2, -p.size / 2, p.size, p.size);
+                    ctx.restore();
+                });
+
+                frames++;
+                if (frames < 90) {
+                    requestAnimationFrame(render);
+                } else {
+                    ctx.clearRect(0, 0, canvas.width, canvas.height);
+                }
+            }
+            render();
+        }
+
+        // Visual Floater Animation for Points
+        function triggerScoreFloater(text, x, y, colorClass = "text-amber-400") {
+            const stage = document.getElementById('game-stage');
+            const el = document.createElement('div');
+            el.className = `floating-score ${colorClass} text-2xl font-black`;
+            el.innerText = text;
+            el.style.left = `${x || 50}%`;
+            el.style.top = `${y || 40}%`;
+            stage.appendChild(el);
+            setTimeout(() => el.remove(), 800);
+        }
+
+        function updateHubStats() {
+            document.getElementById('high-math').innerText = appState.scores.math;
+            document.getElementById('high-memory').innerText = appState.scores.memory;
+            document.getElementById('high-stroop').innerText = appState.scores.stroop;
+            document.getElementById('high-target').innerText = appState.scores.target;
+            document.getElementById('high-sudoku').innerText = appState.scores.sudoku;
+            document.getElementById('high-hidato').innerText = appState.scores.hidato;
+            document.getElementById('high-reaction').innerText = appState.scores.reaction > 0 ? appState.scores.reaction + ' ms' : '-- ms';
+            document.getElementById('high-spatial').innerText = appState.scores.spatial;
+            document.getElementById('high-sequence').innerText = appState.scores.sequence > 0 ? appState.scores.sequence + ' Digits' : '0 Digits';
+
+            const totalScore = appState.scores.math + appState.scores.memory + appState.scores.stroop + appState.scores.target + appState.scores.sudoku + appState.scores.hidato + appState.scores.spatial + (appState.scores.sequence * 50);
+            document.getElementById('global-score').innerText = totalScore;
+            document.getElementById('games-played').innerText = appState.played;
+
+            const iq = 100 + Math.floor(totalScore / 18);
+            document.getElementById('iq-level').innerText = iq;
+        }
+
+        function switchView(viewName) {
+            playSound('click');
+            const hub = document.getElementById('view-hub');
+            const game = document.getElementById('view-game');
+
+            if (viewName === 'hub') {
+                hub.classList.remove('hidden');
+                game.classList.add('hidden');
+                if (activeGame && activeGame.cleanup) activeGame.cleanup();
+                activeGame = null;
+                updateHubStats();
+            } else {
+                hub.classList.add('hidden');
+                game.classList.remove('hidden');
+            }
+        }
+
+        const howToPlayData = {
+            math: {
+                title: "Mental Math Blitz",
+                icon: "fa-calculator",
+                color: "text-amber-400",
+                rules: [
+                    "⏱️ Solve arithmetic equations in 30 seconds.",
+                    "⚡ Streak combo multipliers boost points massively!",
+                    "❌ Incorrect choices reset your multiplier.",
+                    "💡 Quick calculation tips: perform addition/subtraction left-to-right!"
+                ]
+            },
+            memory: {
+                title: "Memory Matrix",
+                icon: "fa-border-all",
+                color: "text-purple-400",
+                rules: [
+                    "💡 Watch tile patterns flash on the grid.",
+                    "🧠 Memorize positions before they flip back face down.",
+                    "🎯 Tap all highlighted tiles without making mistakes!",
+                    "📈 Grids expand larger as your streak grows."
+                ]
+            },
+            stroop: {
+                title: "Stroop Color Match",
+                icon: "fa-palette",
+                color: "text-rose-400",
+                rules: [
+                    "🎨 A color word will be displayed on screen.",
+                    "👀 Does the WRITTEN WORD match the INK COLOR?",
+                    "👉 Tap MATCH or MISMATCH within 2 seconds!",
+                    "🧠 Trains high-speed cognitive impulse control."
+                ]
+            },
+            target: {
+                title: "Precision Target Blitz",
+                icon: "fa-bullseye",
+                color: "text-cyan-400",
+                rules: [
+                    "🎯 Targets spawn continuously on screen.",
+                    "⚡ Tap targets before they shrink away and vanish!",
+                    "🔥 Golden targets yield double combo points.",
+                    "⏱️ 25-second fast finger speed blitz!"
+                ]
+            },
+            sudoku: {
+                title: "Sudoku Master",
+                icon: "fa-table-cells",
+                color: "text-indigo-400",
+                rules: [
+                    "🧩 Fill grid digits 1 to 9.",
+                    "🚫 No repeating digits in any ROW, COLUMN, or 3x3 SUB-GRID.",
+                    "👉 Tap a cell, then select a number from the keypad.",
+                    "💡 Use 'Hint' if stuck!"
+                ]
+            },
+            hidato: {
+                title: "Hidato Grid Path",
+                icon: "fa-route",
+                color: "text-emerald-400",
+                rules: [
+                    "🐍 Connect numbers 1 to N sequentially in an adjacent path.",
+                    "↖️ Moves can be horizontal, vertical, or diagonal.",
+                    "🔢 Fixed starter numbers act as anchors.",
+                    "🎯 Fill all blank tiles to complete the path!"
+                ]
+            },
+            reaction: {
+                title: "Reaction Speed Test",
+                icon: "fa-bolt",
+                color: "text-pink-400",
+                rules: [
+                    "🛑 WAIT for the screen to turn bright GREEN.",
+                    "⚡ Tap IMMEDIATELY when green appears!",
+                    "⚠️ Early taps trigger a false start penalty.",
+                    "🎯 Average over 3 rounds determines your reflex score."
+                ]
+            },
+            spatial: {
+                title: "3D Spatial Visualizer",
+                icon: "fa-cubes-stacked",
+                color: "text-cyan-300",
+                rules: [
+                    "🧊 A 3D block structure is generated in space.",
+                    "🖱️ DRAG / TOUCH to rotate the view 360 degrees.",
+                    "👀 Count ALL unit cubes used to build the shape.",
+                    "⚠️ Remember to count hidden supporting cubes under top blocks!"
+                ]
+            },
+            sequence: {
+                title: "Digit Sequence Span",
+                icon: "fa-arrow-down-1-9",
+                color: "text-blue-400",
+                rules: [
+                    "🔢 A sequence of digits flashes briefly.",
+                    "🧠 Retain the numbers in your working memory.",
+                    "⌨️ Enter the exact sequence using the keypad.",
+                    "🚀 Sequence length increases with each success!"
+                ]
+            }
+        };
+
+        function openHowToPlay(key) {
+            playSound('click');
+            const data = howToPlayData[key];
+            if (!data) return;
+
+            document.getElementById('modal-title').innerText = data.title;
+            const iconElem = document.getElementById('modal-icon');
+            iconElem.className = `w-12 h-12 rounded-2xl bg-slate-800 text-2xl flex items-center justify-center border border-slate-700 ${data.color}`;
+            iconElem.innerHTML = `<i class="fa-solid ${data.icon}"></i>`;
+
+            let html = '<ul class="space-y-2.5">';
+            data.rules.forEach(r => {
+                html += `<li class="flex items-start space-x-2"><span>${r}</span></li>`;
+            });
+            html += '</ul>';
+
+            document.getElementById('modal-body').innerHTML = html;
+            document.getElementById('modal-how-to-play').classList.remove('hidden');
+        }
+
+        function closeModal(id) {
+            playSound('click');
+            document.getElementById(id).classList.add('hidden');
+        }
+
+        function showResults(scoreText, bestText, onReplay, stars = 3) {
+            playSound('fanfare');
+            triggerConfetti();
+
+            appState.played++;
+            localStorage.setItem('bl_played', appState.played);
+
+            document.getElementById('result-score').innerText = scoreText;
+            document.getElementById('result-best').innerText = bestText;
+
+            // Render Stars
+            const starsContainer = document.getElementById('results-stars');
+            starsContainer.innerHTML = '';
+            for (let i = 1; i <= 3; i++) {
+                const star = document.createElement('i');
+                star.className = `fa-solid fa-star ${i <= stars ? 'text-amber-400 animate-bounce' : 'text-slate-700'}`;
+                starsContainer.appendChild(star);
+            }
+            
+            const replayBtn = document.getElementById('btn-replay');
+            replayBtn.onclick = () => {
+                closeModal('modal-results');
+                if (onReplay) onReplay();
+            };
+
+            document.getElementById('modal-results').classList.remove('hidden');
+            updateHubStats();
+        }
+
+        // =========================================================================
+        // 1. MENTAL MATH BLITZ
+        // =========================================================================
+        function startMathGame() {
+            switchView('game');
+            document.getElementById('game-title').innerText = "Mental Math Blitz";
+            document.getElementById('btn-how-to-play-in-game').onclick = () => openHowToPlay('math');
+
+            let score = 0;
+            let streak = 0;
+            let timeLeft = 30;
+            let currentAnswer = 0;
+            let timerInterval = null;
+
+            const stage = document.getElementById('game-stage');
+            stage.innerHTML = `
+                <div class="w-full max-w-md flex flex-col items-center space-y-6">
+                    <div class="w-full flex justify-between items-center bg-slate-900/90 px-4 py-3 rounded-2xl border border-slate-800 font-sans shadow-inner">
+                        <div><span class="text-xs text-slate-400">Score:</span> <span id="m-score" class="text-xl font-black text-amber-400">0</span></div>
+                        <div><span class="text-xs text-slate-400">Combo:</span> <span id="m-streak" class="text-lg font-bold text-pink-400">0x</span></div>
+                        <div><span class="text-xs text-slate-400">Time:</span> <span id="m-time" class="text-xl font-black text-cyan-400">30s</span></div>
+                    </div>
+
+                    <div class="w-full h-32 glass-panel rounded-3xl flex items-center justify-center border border-amber-500/30 shadow-inner relative">
+                        <span id="m-question" class="text-4xl md:text-5xl font-black text-white tracking-wider">Ready?</span>
+                    </div>
+
+                    <div id="m-options" class="grid grid-cols-2 gap-4 w-full"></div>
+                </div>
+            `;
+
+            function generateQuestion() {
+                const ops = ['+', '-', '*'];
+                const op = ops[Math.floor(Math.random() * ops.length)];
+                let a, b;
+
+                if (op === '+') {
+                    a = Math.floor(Math.random() * 45) + 5;
+                    b = Math.floor(Math.random() * 45) + 5;
+                    currentAnswer = a + b;
+                } else if (op === '-') {
+                    a = Math.floor(Math.random() * 50) + 10;
+                    b = Math.floor(Math.random() * a);
+                    currentAnswer = a - b;
+                } else {
+                    a = Math.floor(Math.random() * 12) + 2;
+                    b = Math.floor(Math.random() * 12) + 2;
+                    currentAnswer = a * b;
+                }
+
+                document.getElementById('m-question').innerText = `${a} ${op === '*' ? '×' : op} ${b} = ?`;
+
+                let choices = new Set([currentAnswer]);
+                while (choices.size < 4) {
+                    let offset = (Math.floor(Math.random() * 8) + 1) * (Math.random() > 0.5 ? 1 : -1);
+                    let fake = currentAnswer + offset;
+                    if (fake >= 0) choices.add(fake);
+                }
+
+                const arr = Array.from(choices).sort(() => Math.random() - 0.5);
+                const optContainer = document.getElementById('m-options');
+                optContainer.innerHTML = '';
+
+                arr.forEach(val => {
+                    const btn = document.createElement('button');
+                    btn.className = "arcade-btn h-16 rounded-2xl bg-slate-800 hover:bg-slate-700 border border-slate-700 text-2xl font-black text-white shadow-md flex items-center justify-center active:scale-95";
+                    btn.innerText = val;
+                    btn.onclick = () => checkAnswer(val);
+                    optContainer.appendChild(btn);
+                });
+            }
+
+            function checkAnswer(chosen) {
+                if (chosen === currentAnswer) {
+                    streak++;
+                    const added = 10 + (streak * 5);
+                    score += added;
+                    playSound('correct', streak);
+                    triggerScoreFloater(`+${added}`, 50, 35, 'text-amber-400');
+                } else {
+                    playSound('error');
+                    streak = 0;
+                }
+                document.getElementById('m-score').innerText = score;
+                document.getElementById('m-streak').innerText = streak + 'x';
+                generateQuestion();
+            }
+
+            generateQuestion();
+
+            timerInterval = setInterval(() => {
+                timeLeft--;
+                document.getElementById('m-time').innerText = timeLeft + 's';
+                if (timeLeft <= 0) {
+                    clearInterval(timerInterval);
+                    if (score > appState.scores.math) {
+                        appState.scores.math = score;
+                        localStorage.setItem('bl_math', score);
+                    }
+                    const stars = score > 250 ? 3 : score > 120 ? 2 : 1;
+                    showResults(score + " Pts", appState.scores.math + " Pts", startMathGame, stars);
+                }
+            }, 1000);
+
+            activeGame = { cleanup: () => clearInterval(timerInterval) };
+        }
+
+        // =========================================================================
+        // 2. MEMORY MATRIX (Pattern Flash)
+        // =========================================================================
+        function startMemoryGame() {
+            switchView('game');
+            document.getElementById('game-title').innerText = "Memory Matrix";
+            document.getElementById('btn-how-to-play-in-game').onclick = () => openHowToPlay('memory');
+
+            let gridDimension = 3;
+            let activePattern = [];
+            let userPattern = [];
+            let score = 0;
+            let isDisplaying = false;
+
+            const stage = document.getElementById('game-stage');
+            stage.innerHTML = `
+                <div class="w-full max-w-sm flex flex-col items-center space-y-5">
+                    <div class="w-full flex justify-between items-center bg-slate-900/90 px-4 py-2.5 rounded-2xl border border-slate-800">
+                        <div><span class="text-xs text-slate-400">Level:</span> <span id="mem-level" class="text-lg font-black text-purple-400">1</span></div>
+                        <div><span class="text-xs text-slate-400">Score:</span> <span id="mem-score" class="text-lg font-black text-amber-400">0</span></div>
+                    </div>
+
+                    <div id="mem-grid" class="grid gap-3 bg-slate-900/80 p-4 rounded-3xl border border-slate-800 shadow-2xl w-full aspect-square"></div>
+
+                    <div id="mem-status" class="text-sm font-bold text-purple-300">Watch the pattern...</div>
+                </div>
+            `;
+
+            function renderGrid() {
+                const gridElem = document.getElementById('mem-grid');
+                gridElem.style.gridTemplateColumns = `repeat(${gridDimension}, minmax(0, 1fr))`;
+                gridElem.innerHTML = '';
+
+                const totalCells = gridDimension * gridDimension;
+                for (let i = 0; i < totalCells; i++) {
+                    const tile = document.createElement('button');
+                    tile.dataset.index = i;
+                    tile.className = "arcade-btn rounded-2xl bg-slate-800 border border-slate-700 aspect-square transition-all duration-200";
+                    tile.onclick = () => handleTileClick(i, tile);
+                    gridElem.appendChild(tile);
+                }
+            }
+
+            function startRound() {
+                isDisplaying = true;
+                userPattern = [];
+                document.getElementById('mem-status').innerText = "Memorize the pattern...";
+                
+                const totalCells = gridDimension * gridDimension;
+                const tileCountToFlash = Math.min(3 + Math.floor(score / 40), totalCells - 2);
+
+                activePattern = [];
+                while (activePattern.length < tileCountToFlash) {
+                    let rand = Math.floor(Math.random() * totalCells);
+                    if (!activePattern.includes(rand)) activePattern.push(rand);
+                }
+
+                renderGrid();
+
+                // Flash active pattern
+                setTimeout(() => {
+                    const tiles = document.querySelectorAll('#mem-grid button');
+                    activePattern.forEach(idx => {
+                        tiles[idx].classList.remove('bg-slate-800');
+                        tiles[idx].classList.add('bg-purple-500', 'shadow-lg', 'shadow-purple-500/50', 'scale-95');
+                    });
+                    playSound('pop');
+
+                    setTimeout(() => {
+                        activePattern.forEach(idx => {
+                            tiles[idx].classList.add('bg-slate-800');
+                            tiles[idx].classList.remove('bg-purple-500', 'shadow-lg', 'shadow-purple-500/50', 'scale-95');
+                        });
+                        isDisplaying = false;
+                        document.getElementById('mem-status').innerText = "Tap the tiles you remembered!";
+                    }, 1200);
+                }, 400);
+            }
+
+            function handleTileClick(idx, tile) {
+                if (isDisplaying || userPattern.includes(idx)) return;
+
+                if (activePattern.includes(idx)) {
+                    userPattern.push(idx);
+                    tile.classList.remove('bg-slate-800');
+                    tile.classList.add('bg-emerald-500', 'shadow-lg', 'shadow-emerald-500/50');
+                    playSound('correct', userPattern.length);
+
+                    if (userPattern.length === activePattern.length) {
+                        score += 30 + (gridDimension * 5);
+                        document.getElementById('mem-score').innerText = score;
+                        triggerScoreFloater("+30", 50, 40, 'text-purple-400');
+                        
+                        if (score > 120 && gridDimension === 3) gridDimension = 4;
+
+                        setTimeout(() => {
+                            startRound();
+                        }, 800);
+                    }
+                } else {
+                    tile.classList.add('bg-rose-600');
+                    playSound('error');
+                    if (score > appState.scores.memory) {
+                        appState.scores.memory = score;
+                        localStorage.setItem('bl_memory', score);
+                    }
+                    const stars = score > 150 ? 3 : score > 60 ? 2 : 1;
+                    showResults(score + " Pts", appState.scores.memory + " Pts", startMemoryGame, stars);
+                }
+            }
+
+            renderGrid();
+            startRound();
+        }
+
+        // =========================================================================
+        // 3. STROOP COLOR MATCH
+        // =========================================================================
+        function startStroopGame() {
+            switchView('game');
+            document.getElementById('game-title').innerText = "Stroop Color Match";
+            document.getElementById('btn-how-to-play-in-game').onclick = () => openHowToPlay('stroop');
+
+            let score = 0;
+            let streak = 0;
+            let timeLeft = 25;
+            let timerInterval = null;
+            let isMatch = false;
+
+            const colorOptions = [
+                { name: 'RED', color: 'text-red-500', hex: '#ef4444' },
+                { name: 'BLUE', color: 'text-blue-500', hex: '#3b82f6' },
+                { name: 'GREEN', color: 'text-emerald-400', hex: '#34d399' },
+                { name: 'YELLOW', color: 'text-amber-300', hex: '#fde047' },
+                { name: 'PURPLE', color: 'text-purple-400', hex: '#c084fc' }
+            ];
+
+            const stage = document.getElementById('game-stage');
+            stage.innerHTML = `
+                <div class="w-full max-w-md flex flex-col items-center space-y-6">
+                    <div class="w-full flex justify-between items-center bg-slate-900/90 px-4 py-3 rounded-2xl border border-slate-800 font-sans shadow-inner">
+                        <div><span class="text-xs text-slate-400">Score:</span> <span id="s-score" class="text-xl font-black text-rose-400">0</span></div>
+                        <div><span class="text-xs text-slate-400">Time:</span> <span id="s-time" class="text-xl font-black text-cyan-400">25s</span></div>
+                    </div>
+
+                    <div class="text-xs text-slate-400 uppercase tracking-widest font-sans">Does word text match ink color?</div>
+
+                    <div class="w-full h-36 glass-panel rounded-3xl flex items-center justify-center border border-rose-500/30 shadow-2xl">
+                        <span id="s-word" class="text-5xl font-black tracking-widest">---</span>
+                    </div>
+
+                    <div class="grid grid-cols-2 gap-4 w-full">
+                        <button onclick="answerStroop(true)" class="arcade-btn h-16 rounded-2xl bg-emerald-600 hover:bg-emerald-500 text-slate-950 font-black text-xl flex items-center justify-center space-x-2 shadow-lg shadow-emerald-500/20 active:scale-95">
+                            <i class="fa-solid fa-check"></i>
+                            <span>MATCH</span>
+                        </button>
+                        <button onclick="answerStroop(false)" class="arcade-btn h-16 rounded-2xl bg-rose-600 hover:bg-rose-500 text-white font-black text-xl flex items-center justify-center space-x-2 shadow-lg shadow-rose-500/20 active:scale-95">
+                            <i class="fa-solid fa-xmark"></i>
+                            <span>NO MATCH</span>
+                        </button>
+                    </div>
+                </div>
+            `;
+
+            function nextQuestion() {
+                const textObj = colorOptions[Math.floor(Math.random() * colorOptions.length)];
+                isMatch = Math.random() > 0.5;
+                
+                let inkObj = textObj;
+                if (!isMatch) {
+                    const filtered = colorOptions.filter(c => c.name !== textObj.name);
+                    inkObj = filtered[Math.floor(Math.random() * filtered.length)];
+                }
+
+                const wordElem = document.getElementById('s-word');
+                wordElem.innerText = textObj.name;
+                wordElem.style.color = inkObj.hex;
+            }
+
+            window.answerStroop = function(userAnswer) {
+                if (userAnswer === isMatch) {
+                    streak++;
+                    score += 10 + (streak * 2);
+                    playSound('correct', streak);
+                    triggerScoreFloater("+10", 50, 40, 'text-rose-400');
+                } else {
+                    playSound('error');
+                    streak = 0;
+                }
+                document.getElementById('s-score').innerText = score;
+                nextQuestion();
+            };
+
+            nextQuestion();
+
+            timerInterval = setInterval(() => {
+                timeLeft--;
+                document.getElementById('s-time').innerText = timeLeft + 's';
+                if (timeLeft <= 0) {
+                    clearInterval(timerInterval);
+                    if (score > appState.scores.stroop) {
+                        appState.scores.stroop = score;
+                        localStorage.setItem('bl_stroop', score);
+                    }
+                    const stars = score > 200 ? 3 : score > 100 ? 2 : 1;
+                    showResults(score + " Pts", appState.scores.stroop + " Pts", startStroopGame, stars);
+                }
+            }, 1000);
+
+            activeGame = { cleanup: () => clearInterval(timerInterval) };
+        }
+
+        // =========================================================================
+        // 4. PRECISION TARGET BLITZ
+        // =========================================================================
+        function startTargetGame() {
+            switchView('game');
+            document.getElementById('game-title').innerText = "Target Precision Blitz";
+            document.getElementById('btn-how-to-play-in-game').onclick = () => openHowToPlay('target');
+
+            let score = 0;
+            let timeLeft = 25;
+            let timerInterval = null;
+            let spawnInterval = null;
+
+            const stage = document.getElementById('game-stage');
+            stage.innerHTML = `
+                <div class="w-full h-full flex flex-col items-center justify-between relative">
+                    <div class="w-full flex justify-between items-center bg-slate-900/90 px-4 py-2.5 rounded-2xl border border-slate-800 z-10">
+                        <div><span class="text-xs text-slate-400">Score:</span> <span id="t-score" class="text-xl font-black text-cyan-400">0</span></div>
+                        <div><span class="text-xs text-slate-400">Time:</span> <span id="t-time" class="text-xl font-black text-amber-400">25s</span></div>
+                    </div>
+
+                    <div id="target-arena" class="w-full flex-1 relative overflow-hidden rounded-3xl mt-3 bg-slate-900/50 border border-slate-800 cursor-crosshair"></div>
+                </div>
+            `;
+
+            function spawnTarget() {
+                const arena = document.getElementById('target-arena');
+                if (!arena) return;
+
+                const target = document.createElement('button');
+                const isGold = Math.random() < 0.2;
+                const size = Math.floor(Math.random() * 25) + 40; // 40px to 65px
+
+                const maxX = arena.clientWidth - size - 20;
+                const maxY = arena.clientHeight - size - 20;
+
+                const posX = Math.max(10, Math.floor(Math.random() * maxX));
+                const posY = Math.max(10, Math.floor(Math.random() * maxY));
+
+                target.style.width = `${size}px`;
+                target.style.height = `${size}px`;
+                target.style.left = `${posX}px`;
+                target.style.top = `${posY}px`;
+
+                target.className = `absolute rounded-full flex items-center justify-center transition-transform transform scale-100 hover:scale-105 active:scale-90 shadow-lg ${
+                    isGold ? 'bg-gradient-to-r from-amber-400 to-amber-500 shadow-amber-500/50 animate-bounce' : 'bg-gradient-to-r from-cyan-500 to-blue-500 shadow-cyan-500/50'
+                }`;
+
+                target.innerHTML = `<i class="fa-solid fa-bullseye ${isGold ? 'text-slate-950 text-xl' : 'text-white text-lg'}"></i>`;
+
+                target.onclick = (e) => {
+                    e.stopPropagation();
+                    const points = isGold ? 30 : 15;
+                    score += points;
+                    playSound('pop');
+                    triggerScoreFloater(`+${points}`, (posX / arena.clientWidth) * 100, (posY / arena.clientHeight) * 100, isGold ? 'text-amber-400' : 'text-cyan-400');
+                    document.getElementById('t-score').innerText = score;
+                    target.remove();
+                };
+
+                arena.appendChild(target);
+
+                // Auto remove target after lifespan
+                setTimeout(() => {
+                    if (target.parentNode) target.remove();
+                }, 1400);
+            }
+
+            spawnInterval = setInterval(spawnTarget, 550);
+
+            timerInterval = setInterval(() => {
+                timeLeft--;
+                document.getElementById('t-time').innerText = timeLeft + 's';
+                if (timeLeft <= 0) {
+                    clearInterval(timerInterval);
+                    clearInterval(spawnInterval);
+                    if (score > appState.scores.target) {
+                        appState.scores.target = score;
+                        localStorage.setItem('bl_target', score);
+                    }
+                    const stars = score > 350 ? 3 : score > 180 ? 2 : 1;
+                    showResults(score + " Targets", appState.scores.target + " Pts", startTargetGame, stars);
+                }
+            }, 1000);
+
+            activeGame = {
+                cleanup: () => {
+                    clearInterval(timerInterval);
+                    clearInterval(spawnInterval);
+                }
+            };
+        }
+
+        // =========================================================================
+        // 5. REACTION SPEED TEST
+        // =========================================================================
+        function startReactionGame() {
+            switchView('game');
+            document.getElementById('game-title').innerText = "Reaction Speed Test";
+            document.getElementById('btn-how-to-play-in-game').onclick = () => openHowToPlay('reaction');
+
+            let state = 'waiting';
+            let startTime = 0;
+            let timeoutId = null;
+            let trials = [];
+
+            const stage = document.getElementById('game-stage');
+            
+            function renderState() {
+                stage.className = "flex-1 rounded-3xl p-6 flex flex-col items-center justify-center relative overflow-hidden transition-colors duration-300 cursor-pointer select-none w-full";
+                
+                if (state === 'waiting') {
+                    stage.classList.add('bg-slate-900');
+                    stage.innerHTML = `
+                        <div class="text-center space-y-3 pointer-events-none">
+                            <div class="w-20 h-20 rounded-full bg-pink-500/20 border border-pink-500/40 flex items-center justify-center text-pink-400 text-3xl mx-auto">
+                                <i class="fa-solid fa-hand-pointer animate-pulse"></i>
+                            </div>
+                            <h3 class="text-2xl font-extrabold text-white">Tap to Start</h3>
+                            <p class="text-slate-400 text-xs font-sans">Wait for GREEN, then tap as fast as you can!</p>
+                            <div class="text-xs text-pink-400 font-bold">Rounds completed: ${trials.length}/3</div>
+                        </div>
+                    `;
+                } else if (state === 'ready') {
+                    stage.classList.add('bg-rose-950/80');
+                    stage.innerHTML = `
+                        <div class="text-center space-y-3 pointer-events-none">
+                            <h3 class="text-3xl font-black text-rose-400 uppercase tracking-widest">Wait for Green...</h3>
+                            <p class="text-rose-200/70 text-xs font-sans">Don't tap yet!</p>
+                        </div>
+                    `;
+                } else if (state === 'active') {
+                    stage.classList.add('bg-emerald-500');
+                    stage.innerHTML = `
+                        <div class="text-center space-y-3 pointer-events-none">
+                            <h3 class="text-4xl font-black text-slate-950 uppercase tracking-wider animate-bounce">TAP NOW!</h3>
+                        </div>
+                    `;
+                }
+            }
+
+            stage.onclick = () => {
+                if (state === 'waiting') {
+                    state = 'ready';
+                    renderState();
+                    playSound('click');
+
+                    const delay = Math.floor(Math.random() * 2500) + 1400;
+                    timeoutId = setTimeout(() => {
+                        state = 'active';
+                        startTime = Date.now();
+                        renderState();
+                        playSound('pop');
+                    }, delay);
+
+                } else if (state === 'ready') {
+                    clearTimeout(timeoutId);
+                    playSound('error');
+                    state = 'waiting';
+                    renderState();
+                    stage.innerHTML += `<p class="text-red-400 font-bold text-sm mt-4">Too early! Try again.</p>`;
+
+                } else if (state === 'active') {
+                    const reactionTime = Date.now() - startTime;
+                    playSound('correct');
+                    trials.push(reactionTime);
+
+                    if (trials.length < 3) {
+                        state = 'waiting';
+                        renderState();
+                    } else {
+                        const avg = Math.round(trials.reduce((a, b) => a + b, 0) / trials.length);
+                        if (appState.scores.reaction === 0 || avg < appState.scores.reaction) {
+                            appState.scores.reaction = avg;
+                            localStorage.setItem('bl_reaction', avg);
+                        }
+                        const stars = avg < 220 ? 3 : avg < 300 ? 2 : 1;
+                        showResults(avg + " ms Avg", (appState.scores.reaction || avg) + " ms", startReactionGame, stars);
+                    }
+                }
+            };
+
+            renderState();
+
+            activeGame = { cleanup: () => clearTimeout(timeoutId) };
+        }
+
+        // =========================================================================
+        // 6. 3D SPATIAL VISUALIZER
+        // =========================================================================
+        function startSpatialGame() {
+            switchView('game');
+            document.getElementById('game-title').innerText = "3D Cube Visualizer";
+            document.getElementById('btn-how-to-play-in-game').onclick = () => openHowToPlay('spatial');
+
+            let scene, camera, renderer, cubeGroup;
+            let targetCubeCount = 0;
+            let isDragging = false;
+            let previousMousePosition = { x: 0, y: 0 };
+
+            const stage = document.getElementById('game-stage');
+            stage.innerHTML = `
+                <div class="w-full h-full flex flex-col items-center justify-between relative">
+                    <div class="absolute top-2 left-2 z-10 bg-slate-900/90 px-3 py-1.5 rounded-xl border border-slate-800 text-xs text-slate-300 pointer-events-none">
+                        <i class="fa-solid fa-arrows-spin text-cyan-400 mr-1"></i> Drag to rotate 3D view
+                    </div>
+
+                    <div id="spatial-canvas-container" class="w-full h-64 md:h-80 rounded-2xl overflow-hidden cursor-grab active:cursor-grabbing"></div>
+
+                    <div class="w-full max-w-xs flex flex-col items-center space-y-3 mt-4">
+                        <label class="text-xs text-slate-300 font-sans">How many total unit cubes were used?</label>
+                        <div class="flex space-x-2 w-full">
+                            <input id="cube-input" type="number" placeholder="Count..." class="flex-1 bg-slate-900 border border-slate-700 rounded-xl px-4 py-2 text-white text-center font-extrabold focus:outline-none focus:border-cyan-500">
+                            <button onclick="checkSpatialAnswer()" class="arcade-btn px-5 py-2 bg-gradient-to-r from-cyan-400 to-cyan-500 hover:from-cyan-300 hover:to-cyan-400 text-slate-950 font-bold rounded-xl text-sm shadow-lg shadow-cyan-400/20 active:scale-95">
+                                Submit
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            `;
+
+            const container = document.getElementById('spatial-canvas-container');
+            const width = container.clientWidth || 300;
+            const height = container.clientHeight || 250;
+
+            scene = new THREE.Scene();
+            scene.background = new THREE.Color(0x0f172a);
+
+            camera = new THREE.PerspectiveCamera(45, width / height, 0.1, 1000);
+            camera.position.set(6, 6, 8);
+            camera.lookAt(0, 0, 0);
+
+            renderer = new THREE.WebGLRenderer({ antialias: true });
+            renderer.setSize(width, height);
+            container.appendChild(renderer.domElement);
+
+            const ambientLight = new THREE.AmbientLight(0xffffff, 0.7);
+            scene.add(ambientLight);
+
+            const dirLight = new THREE.DirectionalLight(0xffffff, 0.8);
+            dirLight.position.set(10, 20, 15);
+            scene.add(dirLight);
+
+            cubeGroup = new THREE.Group();
+            scene.add(cubeGroup);
+
+            function buildRandomStructure() {
+                cubeGroup.clear();
+                targetCubeCount = 0;
+
+                const grid = 3;
+                const geometry = new THREE.BoxGeometry(0.92, 0.92, 0.92);
+                
+                const materials = [
+                    new THREE.MeshStandardMaterial({ color: 0x06b6d4, roughness: 0.3 }),
+                    new THREE.MeshStandardMaterial({ color: 0x8b5cf6, roughness: 0.3 }),
+                    new THREE.MeshStandardMaterial({ color: 0xec4899, roughness: 0.3 })
+                ];
+
+                for (let x = 0; x < grid; x++) {
+                    for (let z = 0; z < grid; z++) {
+                        const heightLimit = Math.floor(Math.random() * 3) + 1;
+                        for (let y = 0; y < heightLimit; y++) {
+                            const mat = materials[(x + y + z) % materials.length];
+                            const cube = new THREE.Mesh(geometry, mat);
+                            cube.position.set(x - (grid - 1) / 2, y - 1, z - (grid - 1) / 2);
+                            cubeGroup.add(cube);
+                            targetCubeCount++;
+                        }
+                    }
+                }
+            }
+
+            buildRandomStructure();
+
+            const dom = renderer.domElement;
+            dom.addEventListener('mousedown', (e) => {
+                isDragging = true;
+                previousMousePosition = { x: e.clientX, y: e.clientY };
+            });
+
+            dom.addEventListener('mousemove', (e) => {
+                if (!isDragging) return;
+                const deltaX = e.clientX - previousMousePosition.x;
+                const deltaY = e.clientY - previousMousePosition.y;
+
+                cubeGroup.rotation.y += deltaX * 0.01;
+                cubeGroup.rotation.x += deltaY * 0.01;
+
+                previousMousePosition = { x: e.clientX, y: e.clientY };
+            });
+
+            window.addEventListener('mouseup', () => isDragging = false);
+
+            dom.addEventListener('touchstart', (e) => {
+                if (e.touches.length === 1) {
+                    isDragging = true;
+                    previousMousePosition = { x: e.touches[0].clientX, y: e.touches[0].clientY };
+                }
+            });
+
+            dom.addEventListener('touchmove', (e) => {
+                if (!isDragging || e.touches.length !== 1) return;
+                const deltaX = e.touches[0].clientX - previousMousePosition.x;
+                const deltaY = e.touches[0].clientY - previousMousePosition.y;
+
+                cubeGroup.rotation.y += deltaX * 0.01;
+                cubeGroup.rotation.x += deltaY * 0.01;
+
+                previousMousePosition = { x: e.touches[0].clientX, y: e.touches[0].clientY };
+            });
+
+            dom.addEventListener('touchend', () => isDragging = false);
+
+            let animId;
+            function animate() {
+                animId = requestAnimationFrame(animate);
+                if (!isDragging) cubeGroup.rotation.y += 0.003;
+                renderer.render(scene, camera);
+            }
+            animate();
+
+            window.checkSpatialAnswer = function() {
+                const input = parseInt(document.getElementById('cube-input').value);
+                if (isNaN(input)) return;
+
+                if (input === targetCubeCount) {
+                    playSound('correct');
+                    const score = 100;
+                    if (score > appState.scores.spatial) {
+                        appState.scores.spatial += score;
+                        localStorage.setItem('bl_spatial', appState.scores.spatial);
+                    }
+                    showResults(`Correct! (${targetCubeCount} Cubes)`, appState.scores.spatial + " Total Pts", startSpatialGame, 3);
+                } else {
+                    playSound('error');
+                    const inp = document.getElementById('cube-input');
+                    inp.classList.add('animate-shake', 'border-red-500');
+                    setTimeout(() => inp.classList.remove('animate-shake', 'border-red-500'), 500);
+                }
+            };
+
+            activeGame = {
+                cleanup: () => {
+                    cancelAnimationFrame(animId);
+                    if (renderer && renderer.domElement) renderer.domElement.remove();
+                }
+            };
+        }
+
+        // =========================================================================
+        // 7. SUDOKU MASTER
+        // =========================================================================
+        function startSudokuGame() {
+            switchView('game');
+            document.getElementById('game-title').innerText = "Sudoku Master";
+            document.getElementById('btn-how-to-play-in-game').onclick = () => openHowToPlay('sudoku');
+
+            const solution = [
+                5,3,4, 6,7,8, 9,1,2,
+                6,7,2, 1,9,5, 3,4,8,
+                1,9,8, 3,4,2, 5,6,7,
+                8,5,9, 7,6,1, 4,2,3,
+                4,2,6, 8,5,3, 7,9,1,
+                7,1,3, 9,2,4, 8,5,6,
+                9,6,1, 5,3,7, 2,8,4,
+                2,8,7, 4,1,9, 6,3,5,
+                3,4,5, 2,8,6, 1,7,9
+            ];
+
+            const puzzle = [
+                5,3,0, 0,7,0, 0,0,0,
+                6,0,0, 1,9,5, 0,0,0,
+                0,9,8, 0,0,0, 0,6,0,
+                8,0,0, 0,6,0, 0,0,3,
+                4,0,0, 8,0,3, 0,0,1,
+                7,0,0, 0,2,0, 0,0,6,
+                0,6,0, 0,0,0, 2,8,0,
+                0,0,0, 4,1,9, 0,0,5,
+                0,0,0, 0,8,0, 0,7,9
+            ];
+
+            let userGrid = [...puzzle];
+            let selectedIdx = null;
+            let hintsUsed = 0;
+
+            const stage = document.getElementById('game-stage');
+            stage.innerHTML = `
+                <div class="w-full max-w-lg flex flex-col items-center space-y-4">
+                    <div class="w-full flex justify-between items-center bg-slate-900/80 px-4 py-2 rounded-2xl border border-slate-800">
+                        <button onclick="sudokuHint()" class="arcade-btn px-3 py-1.5 bg-purple-900/50 border border-purple-500/40 text-purple-300 rounded-xl text-xs font-bold flex items-center space-x-1">
+                            <i class="fa-solid fa-lightbulb"></i>
+                            <span>Hint (<span id="hint-cnt">3</span>)</span>
+                        </button>
+                        <button onclick="checkSudokuComplete()" class="arcade-btn px-4 py-1.5 bg-indigo-600 hover:bg-indigo-500 text-white rounded-xl text-xs font-bold">
+                            Validate Grid
+                        </button>
+                    </div>
+
+                    <div id="sudoku-board" class="sudoku-grid gap-1 bg-slate-800 p-2 rounded-2xl border border-slate-700 shadow-2xl w-full max-w-[360px] aspect-square"></div>
+
+                    <div class="grid grid-cols-5 gap-2 w-full max-w-[360px]">
+                        ${[1,2,3,4,5,6,7,8,9].map(num => `
+                            <button onclick="inputSudokuNumber(${num})" class="arcade-btn h-11 bg-slate-800 hover:bg-slate-700 border border-slate-700 text-indigo-300 font-extrabold rounded-xl text-lg flex items-center justify-center">
+                                ${num}
+                            </button>
+                        `).join('')}
+                        <button onclick="inputSudokuNumber(0)" class="arcade-btn h-11 bg-rose-900/40 border border-rose-700/50 text-rose-300 font-bold rounded-xl text-xs flex items-center justify-center">
+                            Erase
+                        </button>
+                    </div>
+                </div>
+            `;
+
+            function renderBoard() {
+                const board = document.getElementById('sudoku-board');
+                board.innerHTML = '';
+
+                for (let i = 0; i < 81; i++) {
+                    const row = Math.floor(i / 9);
+                    const col = i % 9;
+                    const isFixed = puzzle[i] !== 0;
+                    const val = userGrid[i];
+
+                    const cell = document.createElement('div');
+                    let bg = "bg-slate-900/90";
+                    if (selectedIdx === i) bg = "bg-indigo-600/40 ring-2 ring-indigo-400";
+                    
+                    let borderClasses = "border border-slate-800/60";
+                    if ((col + 1) % 3 === 0 && col !== 8) borderClasses += " border-r-2 border-r-slate-600";
+                    if ((row + 1) % 3 === 0 && row !== 8) borderClasses += " border-b-2 border-b-slate-600";
+
+                    cell.className = `sudoku-cell ${bg} ${borderClasses} flex items-center justify-center font-bold text-lg cursor-pointer rounded-sm ${isFixed ? 'text-slate-400 font-normal' : 'text-indigo-300'}`;
+                    cell.innerText = val > 0 ? val : '';
+                    cell.onclick = () => {
+                        playSound('click');
+                        selectedIdx = i;
+                        renderBoard();
+                    };
+                    board.appendChild(cell);
+                }
+            }
+
+            window.inputSudokuNumber = function(num) {
+                if (selectedIdx === null || puzzle[selectedIdx] !== 0) return;
+                playSound('click');
+                userGrid[selectedIdx] = num;
+                renderBoard();
+            };
+
+            window.sudokuHint = function() {
+                if (hintsUsed >= 3 || selectedIdx === null || puzzle[selectedIdx] !== 0) return;
+                userGrid[selectedIdx] = solution[selectedIdx];
+                hintsUsed++;
+                document.getElementById('hint-cnt').innerText = 3 - hintsUsed;
+                playSound('correct');
+                renderBoard();
+            };
+
+            window.checkSudokuComplete = function() {
+                let correct = true;
+                for (let i = 0; i < 81; i++) {
+                    if (userGrid[i] !== solution[i]) {
+                        correct = false;
+                        break;
+                    }
+                }
+
+                if (correct) {
+                    const score = 500 - (hintsUsed * 50);
+                    if (score > appState.scores.sudoku) {
+                        appState.scores.sudoku = score;
+                        localStorage.setItem('bl_sudoku', score);
+                    }
+                    showResults("Puzzle Solved!", appState.scores.sudoku + " pts", startSudokuGame, 3);
+                } else {
+                    playSound('error');
+                    const stageContainer = document.getElementById('game-stage');
+                    stageContainer.classList.add('animate-shake');
+                    setTimeout(() => stageContainer.classList.remove('animate-shake'), 500);
+                }
+            };
+
+            renderBoard();
+        }
+
+        // =========================================================================
+        // 8. HIDATO GRID PATH
+        // =========================================================================
+        function startHidatoGame() {
+            switchView('game');
+            document.getElementById('game-title').innerText = "Hidato Grid Path";
+            document.getElementById('btn-how-to-play-in-game').onclick = () => openHowToPlay('hidato');
+
+            const totalCells = 16;
+            const solution = [
+                1, 2, 3, 4,
+                8, 7, 6, 5,
+                9, 10, 15, 14,
+                11, 12, 13, 16
+            ];
+
+            const fixed = [
+                1, 0, 0, 4,
+                0, 7, 0, 0,
+                9, 0, 0, 14,
+                0, 12, 0, 16
+            ];
+
+            let userPath = [...fixed];
+            let activeNum = 2;
+
+            const stage = document.getElementById('game-stage');
+            stage.innerHTML = `
+                <div class="w-full max-w-md flex flex-col items-center space-y-4">
+                    <div class="flex items-center justify-between w-full bg-slate-900/80 px-4 py-2 rounded-2xl border border-slate-800">
+                        <span class="text-xs text-slate-400">Place Next Number:</span>
+                        <span id="hid-next" class="text-xl font-black text-emerald-400">2</span>
+                        <button onclick="resetHidato()" class="arcade-btn text-xs bg-slate-800 border border-slate-700 text-slate-300 px-3 py-1 rounded-xl">
+                            Reset
+                        </button>
+                    </div>
+
+                    <div id="hidato-board" class="grid grid-cols-4 gap-2 bg-slate-900/90 p-4 rounded-3xl border border-slate-800 shadow-2xl w-full max-w-[320px] aspect-square"></div>
+                </div>
+            `;
+
+            function renderHidato() {
+                const board = document.getElementById('hidato-board');
+                board.innerHTML = '';
+
+                let maxFilled = 1;
+                for (let v of userPath) {
+                    if (v > maxFilled && v < 16) maxFilled = v;
+                }
+                activeNum = maxFilled + 1;
+                document.getElementById('hid-next').innerText = activeNum <= 16 ? activeNum : 'Done!';
+
+                for (let i = 0; i < totalCells; i++) {
+                    const val = userPath[i];
+                    const isFixed = fixed[i] !== 0;
+
+                    const cell = document.createElement('button');
+                    let bg = "bg-slate-800/80 border-slate-700 hover:bg-slate-700";
+                    if (val > 0) bg = isFixed ? "bg-emerald-900/40 border-emerald-500/50 text-emerald-300" : "bg-emerald-600/40 border-emerald-400 text-white font-bold";
+
+                    cell.className = `hidato-cell ${bg} border-2 rounded-2xl flex items-center justify-center text-xl font-extrabold shadow-md transition-all active:scale-95`;
+                    cell.innerText = val > 0 ? val : '';
+                    cell.onclick = () => handleHidatoCellClick(i);
+
+                    board.appendChild(cell);
+                }
+            }
+
+            function handleHidatoCellClick(idx) {
+                if (fixed[idx] !== 0) return;
+
+                if (userPath[idx] > 0) {
+                    userPath[idx] = 0;
+                    playSound('click');
+                } else {
+                    userPath[idx] = activeNum;
+                    playSound('click');
+                }
+                renderHidato();
+                checkHidatoWin();
+            }
+
+            window.resetHidato = function() {
+                userPath = [...fixed];
+                renderHidato();
+            };
+
+            function checkHidatoWin() {
+                let win = true;
+                for (let i = 0; i < totalCells; i++) {
+                    if (userPath[i] !== solution[i]) {
+                        win = false;
+                        break;
+                    }
+                }
+
+                if (win) {
+                    const score = 300;
+                    if (score > appState.scores.hidato) {
+                        appState.scores.hidato = score;
+                        localStorage.setItem('bl_hidato', score);
+                    }
+                    showResults("Path Solved!", appState.scores.hidato + " pts", startHidatoGame, 3);
+                }
+            }
+
+            renderHidato();
+        }
+
+        // =========================================================================
+        // 9. DIGIT SEQUENCE SPAN MEMORY
+        // =========================================================================
+        function startSequenceGame() {
+            switchView('game');
+            document.getElementById('game-title').innerText = "Digit Sequence Memory";
+            document.getElementById('btn-how-to-play-in-game').onclick = () => openHowToPlay('sequence');
+
+            let sequenceLength = 3;
+            let currentSequence = "";
+            let userInput = "";
+            let isShowing = false;
+
+            const stage = document.getElementById('game-stage');
+            stage.innerHTML = `
+                <div class="w-full max-w-sm flex flex-col items-center space-y-5">
+                    <div class="w-full flex justify-between items-center bg-slate-900/90 px-4 py-2.5 rounded-2xl border border-slate-800">
+                        <div><span class="text-xs text-slate-400">Sequence Length:</span> <span id="seq-len" class="text-lg font-black text-blue-400">3 Digits</span></div>
+                    </div>
+
+                    <div class="w-full h-28 glass-panel rounded-3xl flex items-center justify-center border border-blue-500/30 shadow-2xl relative">
+                        <span id="seq-display" class="text-4xl font-black text-white tracking-widest">Starting...</span>
+                    </div>
+
+                    <div id="seq-keypad" class="grid grid-cols-3 gap-3 w-full">
+                        ${[1,2,3,4,5,6,7,8,9,0].map(num => `
+                            <button onclick="pressSeqNum('${num}')" class="arcade-btn h-12 bg-slate-800 hover:bg-slate-700 border border-slate-700 text-blue-300 font-extrabold rounded-2xl text-xl flex items-center justify-center shadow-md active:scale-95">
+                                ${num}
+                            </button>
+                        `).join('')}
+                    </div>
+                </div>
+            `;
+
+            function startRound() {
+                userInput = "";
+                isShowing = true;
+                currentSequence = "";
+                for (let i = 0; i < sequenceLength; i++) {
+                    currentSequence += Math.floor(Math.random() * 10);
+                }
+
+                document.getElementById('seq-len').innerText = sequenceLength + " Digits";
+                const display = document.getElementById('seq-display');
+                display.innerText = currentSequence;
+                playSound('pop');
+
+                setTimeout(() => {
+                    display.innerText = "???";
+                    isShowing = false;
+                }, 1000 + (sequenceLength * 350));
+            }
+
+            window.pressSeqNum = function(num) {
+                if (isShowing) return;
+
+                userInput += num;
+                playSound('click');
+                const display = document.getElementById('seq-display');
+                display.innerText = userInput;
+
+                if (userInput.length === currentSequence.length) {
+                    if (userInput === currentSequence) {
+                        playSound('correct');
+                        sequenceLength++;
+                        triggerScoreFloater("+1 Level", 50, 40, 'text-blue-400');
+                        setTimeout(startRound, 800);
+                    } else {
+                        playSound('error');
+                        const finalDigits = sequenceLength - 1;
+                        if (finalDigits > appState.scores.sequence) {
+                            appState.scores.sequence = finalDigits;
+                            localStorage.setItem('bl_sequence', finalDigits);
+                        }
+                        const stars = finalDigits > 7 ? 3 : finalDigits > 4 ? 2 : 1;
+                        showResults(finalDigits + " Digits Reached", appState.scores.sequence + " Digits", startSequenceGame, stars);
+                    }
+                }
+            };
+
+            startRound();
+        }
+
+        // Initialize App Hub Stats on Load
+        window.onload = function() {
+            updateHubStats();
+        };
+    </script>
+</body>
+</html>
