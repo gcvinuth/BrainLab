@@ -548,7 +548,7 @@
                     osc.start(now);
                     osc.stop(now + 0.04);
                 } else if (type === 'correct') {
-                    const baseFreq = 523.25 + (combo * 40); // Pitch scales with combo!
+                    const baseFreq = 523.25 + (combo * 40);
                     osc.frequency.setValueAtTime(baseFreq, now);
                     osc.frequency.setValueAtTime(baseFreq * 1.25, now + 0.08);
                     gain.gain.setValueAtTime(0.18, now);
@@ -653,6 +653,7 @@
         // Visual Floater Animation for Points
         function triggerScoreFloater(text, x, y, colorClass = "text-amber-400") {
             const stage = document.getElementById('game-stage');
+            if (!stage) return;
             const el = document.createElement('div');
             el.className = `floating-score ${colorClass} text-2xl font-black`;
             el.innerText = text;
@@ -686,11 +687,15 @@
             const hub = document.getElementById('view-hub');
             const game = document.getElementById('view-game');
 
+            // Explicitly clean up any active timers/listeners from current game
+            if (activeGame && typeof activeGame.cleanup === 'function') {
+                activeGame.cleanup();
+            }
+            activeGame = null;
+
             if (viewName === 'hub') {
                 hub.classList.remove('hidden');
                 game.classList.add('hidden');
-                if (activeGame && activeGame.cleanup) activeGame.cleanup();
-                activeGame = null;
                 updateHubStats();
             } else {
                 hub.classList.add('hidden');
@@ -904,7 +909,10 @@
                     currentAnswer = a * b;
                 }
 
-                document.getElementById('m-question').innerText = `${a} ${op === '*' ? '×' : op} ${b} = ?`;
+                const questionElem = document.getElementById('m-question');
+                if (questionElem) {
+                    questionElem.innerText = `${a} ${op === '*' ? '×' : op} ${b} = ?`;
+                }
 
                 let choices = new Set([currentAnswer]);
                 while (choices.size < 4) {
@@ -915,6 +923,7 @@
 
                 const arr = Array.from(choices).sort(() => Math.random() - 0.5);
                 const optContainer = document.getElementById('m-options');
+                if (!optContainer) return;
                 optContainer.innerHTML = '';
 
                 arr.forEach(val => {
@@ -937,8 +946,10 @@
                     playSound('error');
                     streak = 0;
                 }
-                document.getElementById('m-score').innerText = score;
-                document.getElementById('m-streak').innerText = streak + 'x';
+                const scoreElem = document.getElementById('m-score');
+                const streakElem = document.getElementById('m-streak');
+                if (scoreElem) scoreElem.innerText = score;
+                if (streakElem) streakElem.innerText = streak + 'x';
                 generateQuestion();
             }
 
@@ -946,7 +957,8 @@
 
             timerInterval = setInterval(() => {
                 timeLeft--;
-                document.getElementById('m-time').innerText = timeLeft + 's';
+                const timeElem = document.getElementById('m-time');
+                if (timeElem) timeElem.innerText = timeLeft + 's';
                 if (timeLeft <= 0) {
                     clearInterval(timerInterval);
                     if (score > appState.scores.math) {
@@ -974,6 +986,7 @@
             let userPattern = [];
             let score = 0;
             let isDisplaying = false;
+            let timeouts = [];
 
             const stage = document.getElementById('game-stage');
             stage.innerHTML = `
@@ -991,6 +1004,7 @@
 
             function renderGrid() {
                 const gridElem = document.getElementById('mem-grid');
+                if (!gridElem) return;
                 gridElem.style.gridTemplateColumns = `repeat(${gridDimension}, minmax(0, 1fr))`;
                 gridElem.innerHTML = '';
 
@@ -1007,7 +1021,8 @@
             function startRound() {
                 isDisplaying = true;
                 userPattern = [];
-                document.getElementById('mem-status').innerText = "Memorize the pattern...";
+                const statusElem = document.getElementById('mem-status');
+                if (statusElem) statusElem.innerText = "Memorize the pattern...";
                 
                 const totalCells = gridDimension * gridDimension;
                 const tileCountToFlash = Math.min(3 + Math.floor(score / 40), totalCells - 2);
@@ -1020,23 +1035,30 @@
 
                 renderGrid();
 
-                setTimeout(() => {
+                const t1 = setTimeout(() => {
                     const tiles = document.querySelectorAll('#mem-grid button');
                     activePattern.forEach(idx => {
-                        tiles[idx].classList.remove('bg-slate-800');
-                        tiles[idx].classList.add('bg-purple-500', 'shadow-lg', 'shadow-purple-500/50', 'scale-95');
+                        if (tiles[idx]) {
+                            tiles[idx].classList.remove('bg-slate-800');
+                            tiles[idx].classList.add('bg-purple-500', 'shadow-lg', 'shadow-purple-500/50', 'scale-95');
+                        }
                     });
                     playSound('pop');
 
-                    setTimeout(() => {
+                    const t2 = setTimeout(() => {
                         activePattern.forEach(idx => {
-                            tiles[idx].classList.add('bg-slate-800');
-                            tiles[idx].classList.remove('bg-purple-500', 'shadow-lg', 'shadow-purple-500/50', 'scale-95');
+                            if (tiles[idx]) {
+                                tiles[idx].classList.add('bg-slate-800');
+                                tiles[idx].classList.remove('bg-purple-500', 'shadow-lg', 'shadow-purple-500/50', 'scale-95');
+                            }
                         });
                         isDisplaying = false;
-                        document.getElementById('mem-status').innerText = "Tap the tiles you remembered!";
+                        const statusInner = document.getElementById('mem-status');
+                        if (statusInner) statusInner.innerText = "Tap the tiles you remembered!";
                     }, 1200);
+                    timeouts.push(t2);
                 }, 400);
+                timeouts.push(t1);
             }
 
             function handleTileClick(idx, tile) {
@@ -1050,14 +1072,16 @@
 
                     if (userPattern.length === activePattern.length) {
                         score += 30 + (gridDimension * 5);
-                        document.getElementById('mem-score').innerText = score;
+                        const scoreElem = document.getElementById('mem-score');
+                        if (scoreElem) scoreElem.innerText = score;
                         triggerScoreFloater("+30", 50, 40, 'text-purple-400');
                         
                         if (score > 120 && gridDimension === 3) gridDimension = 4;
 
-                        setTimeout(() => {
+                        const t3 = setTimeout(() => {
                             startRound();
                         }, 800);
+                        timeouts.push(t3);
                     }
                 } else {
                     tile.classList.add('bg-rose-600');
@@ -1073,6 +1097,12 @@
 
             renderGrid();
             startRound();
+
+            activeGame = {
+                cleanup: () => {
+                    timeouts.forEach(t => clearTimeout(t));
+                }
+            };
         }
 
         // =========================================================================
@@ -1112,11 +1142,11 @@
                     </div>
 
                     <div class="grid grid-cols-2 gap-4 w-full">
-                        <button onclick="answerStroop(true)" class="arcade-btn h-16 rounded-2xl bg-emerald-600 hover:bg-emerald-500 text-slate-950 font-black text-xl flex items-center justify-center space-x-2 shadow-lg shadow-emerald-500/20 active:scale-95">
+                        <button id="stroop-match-btn" class="arcade-btn h-16 rounded-2xl bg-emerald-600 hover:bg-emerald-500 text-slate-950 font-black text-xl flex items-center justify-center space-x-2 shadow-lg shadow-emerald-500/20 active:scale-95">
                             <i class="fa-solid fa-check"></i>
                             <span>MATCH</span>
                         </button>
-                        <button onclick="answerStroop(false)" class="arcade-btn h-16 rounded-2xl bg-rose-600 hover:bg-rose-500 text-white font-black text-xl flex items-center justify-center space-x-2 shadow-lg shadow-rose-500/20 active:scale-95">
+                        <button id="stroop-nomatch-btn" class="arcade-btn h-16 rounded-2xl bg-rose-600 hover:bg-rose-500 text-white font-black text-xl flex items-center justify-center space-x-2 shadow-lg shadow-rose-500/20 active:scale-95">
                             <i class="fa-solid fa-xmark"></i>
                             <span>NO MATCH</span>
                         </button>
@@ -1135,11 +1165,13 @@
                 }
 
                 const wordElem = document.getElementById('s-word');
-                wordElem.innerText = textObj.name;
-                wordElem.style.color = inkObj.hex;
+                if (wordElem) {
+                    wordElem.innerText = textObj.name;
+                    wordElem.style.color = inkObj.hex;
+                }
             }
 
-            window.answerStroop = function(userAnswer) {
+            function answerStroop(userAnswer) {
                 if (userAnswer === isMatch) {
                     streak++;
                     score += 10 + (streak * 2);
@@ -1149,15 +1181,20 @@
                     playSound('error');
                     streak = 0;
                 }
-                document.getElementById('s-score').innerText = score;
+                const scoreElem = document.getElementById('s-score');
+                if (scoreElem) scoreElem.innerText = score;
                 nextQuestion();
-            };
+            }
+
+            document.getElementById('stroop-match-btn').onclick = () => answerStroop(true);
+            document.getElementById('stroop-nomatch-btn').onclick = () => answerStroop(false);
 
             nextQuestion();
 
             timerInterval = setInterval(() => {
                 timeLeft--;
-                document.getElementById('s-time').innerText = timeLeft + 's';
+                const timeElem = document.getElementById('s-time');
+                if (timeElem) timeElem.innerText = timeLeft + 's';
                 if (timeLeft <= 0) {
                     clearInterval(timerInterval);
                     if (score > appState.scores.stroop) {
@@ -1205,8 +1242,8 @@
                 const isGold = Math.random() < 0.2;
                 const size = Math.floor(Math.random() * 25) + 40;
 
-                const maxX = arena.clientWidth - size - 20;
-                const maxY = arena.clientHeight - size - 20;
+                const maxX = Math.max(10, arena.clientWidth - size - 20);
+                const maxY = Math.max(10, arena.clientHeight - size - 20);
 
                 const posX = Math.max(10, Math.floor(Math.random() * maxX));
                 const posY = Math.max(10, Math.floor(Math.random() * maxY));
@@ -1228,7 +1265,8 @@
                     score += points;
                     playSound('pop');
                     triggerScoreFloater(`+${points}`, (posX / arena.clientWidth) * 100, (posY / arena.clientHeight) * 100, isGold ? 'text-amber-400' : 'text-cyan-400');
-                    document.getElementById('t-score').innerText = score;
+                    const scoreElem = document.getElementById('t-score');
+                    if (scoreElem) scoreElem.innerText = score;
                     target.remove();
                 };
 
@@ -1243,7 +1281,8 @@
 
             timerInterval = setInterval(() => {
                 timeLeft--;
-                document.getElementById('t-time').innerText = timeLeft + 's';
+                const timeElem = document.getElementById('t-time');
+                if (timeElem) timeElem.innerText = timeLeft + 's';
                 if (timeLeft <= 0) {
                     clearInterval(timerInterval);
                     clearInterval(spawnInterval);
@@ -1280,6 +1319,7 @@
             const stage = document.getElementById('game-stage');
             
             function renderState() {
+                if (!stage) return;
                 stage.className = "flex-1 rounded-3xl p-6 flex flex-col items-center justify-center relative overflow-hidden transition-colors duration-300 cursor-pointer select-none w-full";
                 
                 if (state === 'waiting') {
@@ -1355,7 +1395,12 @@
 
             renderState();
 
-            activeGame = { cleanup: () => clearTimeout(timeoutId) };
+            activeGame = { 
+                cleanup: () => {
+                    clearTimeout(timeoutId);
+                    if (stage) stage.onclick = null;
+                } 
+            };
         }
 
         // =========================================================================
@@ -1370,6 +1415,7 @@
             let targetCubeCount = 0;
             let isDragging = false;
             let previousMousePosition = { x: 0, y: 0 };
+            let animId = null;
 
             const stage = document.getElementById('game-stage');
             stage.innerHTML = `
@@ -1384,7 +1430,7 @@
                         <label class="text-xs text-slate-300 font-sans">How many total unit cubes were used?</label>
                         <div class="flex space-x-2 w-full">
                             <input id="cube-input" type="number" placeholder="Count..." class="flex-1 bg-slate-900 border border-slate-700 rounded-xl px-4 py-2 text-white text-center font-extrabold focus:outline-none focus:border-cyan-500">
-                            <button onclick="checkSpatialAnswer()" class="arcade-btn px-5 py-2 bg-gradient-to-r from-cyan-400 to-cyan-500 hover:from-cyan-300 hover:to-cyan-400 text-slate-950 font-bold rounded-xl text-sm shadow-lg shadow-cyan-400/20 active:scale-95">
+                            <button id="spatial-submit-btn" class="arcade-btn px-5 py-2 bg-gradient-to-r from-cyan-400 to-cyan-500 hover:from-cyan-300 hover:to-cyan-400 text-slate-950 font-bold rounded-xl text-sm shadow-lg shadow-cyan-400/20 active:scale-95">
                                 Submit
                             </button>
                         </div>
@@ -1447,12 +1493,13 @@
             buildRandomStructure();
 
             const dom = renderer.domElement;
-            dom.addEventListener('mousedown', (e) => {
+            
+            const handleMouseDown = (e) => {
                 isDragging = true;
                 previousMousePosition = { x: e.clientX, y: e.clientY };
-            });
+            };
 
-            dom.addEventListener('mousemove', (e) => {
+            const handleMouseMove = (e) => {
                 if (!isDragging) return;
                 const deltaX = e.clientX - previousMousePosition.x;
                 const deltaY = e.clientY - previousMousePosition.y;
@@ -1461,18 +1508,18 @@
                 cubeGroup.rotation.x += deltaY * 0.01;
 
                 previousMousePosition = { x: e.clientX, y: e.clientY };
-            });
+            };
 
-            window.addEventListener('mouseup', () => isDragging = false);
+            const handleMouseUp = () => isDragging = false;
 
-            dom.addEventListener('touchstart', (e) => {
+            const handleTouchStart = (e) => {
                 if (e.touches.length === 1) {
                     isDragging = true;
                     previousMousePosition = { x: e.touches[0].clientX, y: e.touches[0].clientY };
                 }
-            });
+            };
 
-            dom.addEventListener('touchmove', (e) => {
+            const handleTouchMove = (e) => {
                 if (!isDragging || e.touches.length !== 1) return;
                 const deltaX = e.touches[0].clientX - previousMousePosition.x;
                 const deltaY = e.touches[0].clientY - previousMousePosition.y;
@@ -1481,11 +1528,16 @@
                 cubeGroup.rotation.x += deltaY * 0.01;
 
                 previousMousePosition = { x: e.touches[0].clientX, y: e.touches[0].clientY };
-            });
+            };
 
-            dom.addEventListener('touchend', () => isDragging = false);
+            dom.addEventListener('mousedown', handleMouseDown);
+            dom.addEventListener('mousemove', handleMouseMove);
+            window.addEventListener('mouseup', handleMouseUp);
 
-            let animId;
+            dom.addEventListener('touchstart', handleTouchStart);
+            dom.addEventListener('touchmove', handleTouchMove);
+            dom.addEventListener('touchend', handleMouseUp);
+
             function animate() {
                 animId = requestAnimationFrame(animate);
                 if (!isDragging) cubeGroup.rotation.y += 0.003;
@@ -1493,8 +1545,10 @@
             }
             animate();
 
-            window.checkSpatialAnswer = function() {
-                const input = parseInt(document.getElementById('cube-input').value);
+            function checkSpatialAnswer() {
+                const inputElem = document.getElementById('cube-input');
+                if (!inputElem) return;
+                const input = parseInt(inputElem.value);
                 if (isNaN(input)) return;
 
                 if (input === targetCubeCount) {
@@ -1507,15 +1561,17 @@
                     showResults(`Correct! (${targetCubeCount} Cubes)`, appState.scores.spatial + " Total Pts", startSpatialGame, 3);
                 } else {
                     playSound('error');
-                    const inp = document.getElementById('cube-input');
-                    inp.classList.add('animate-shake', 'border-red-500');
-                    setTimeout(() => inp.classList.remove('animate-shake', 'border-red-500'), 500);
+                    inputElem.classList.add('animate-shake', 'border-red-500');
+                    setTimeout(() => inputElem.classList.remove('animate-shake', 'border-red-500'), 500);
                 }
-            };
+            }
+
+            document.getElementById('spatial-submit-btn').onclick = checkSpatialAnswer;
 
             activeGame = {
                 cleanup: () => {
                     cancelAnimationFrame(animId);
+                    window.removeEventListener('mouseup', handleMouseUp);
                     if (renderer && renderer.domElement) renderer.domElement.remove();
                 }
             };
@@ -1561,11 +1617,11 @@
             stage.innerHTML = `
                 <div class="w-full max-w-lg flex flex-col items-center space-y-4">
                     <div class="w-full flex justify-between items-center bg-slate-900/80 px-4 py-2 rounded-2xl border border-slate-800">
-                        <button onclick="sudokuHint()" class="arcade-btn px-3 py-1.5 bg-purple-900/50 border border-purple-500/40 text-purple-300 rounded-xl text-xs font-bold flex items-center space-x-1">
+                        <button id="sudoku-hint-btn" class="arcade-btn px-3 py-1.5 bg-purple-900/50 border border-purple-500/40 text-purple-300 rounded-xl text-xs font-bold flex items-center space-x-1">
                             <i class="fa-solid fa-lightbulb"></i>
                             <span>Hint (<span id="hint-cnt">3</span>)</span>
                         </button>
-                        <button onclick="checkSudokuComplete()" class="arcade-btn px-4 py-1.5 bg-indigo-600 hover:bg-indigo-500 text-white rounded-xl text-xs font-bold">
+                        <button id="sudoku-validate-btn" class="arcade-btn px-4 py-1.5 bg-indigo-600 hover:bg-indigo-500 text-white rounded-xl text-xs font-bold">
                             Validate Grid
                         </button>
                     </div>
@@ -1574,11 +1630,11 @@
 
                     <div class="grid grid-cols-5 gap-2 w-full max-w-[360px]">
                         ${[1,2,3,4,5,6,7,8,9].map(num => `
-                            <button onclick="inputSudokuNumber(${num})" class="arcade-btn h-11 bg-slate-800 hover:bg-slate-700 border border-slate-700 text-indigo-300 font-extrabold rounded-xl text-lg flex items-center justify-center">
+                            <button data-num="${num}" class="sudoku-num-btn arcade-btn h-11 bg-slate-800 hover:bg-slate-700 border border-slate-700 text-indigo-300 font-extrabold rounded-xl text-lg flex items-center justify-center">
                                 ${num}
                             </button>
                         `).join('')}
-                        <button onclick="inputSudokuNumber(0)" class="arcade-btn h-11 bg-rose-900/40 border border-rose-700/50 text-rose-300 font-bold rounded-xl text-xs flex items-center justify-center">
+                        <button data-num="0" class="sudoku-num-btn arcade-btn h-11 bg-rose-900/40 border border-rose-700/50 text-rose-300 font-bold rounded-xl text-xs flex items-center justify-center">
                             Erase
                         </button>
                     </div>
@@ -1587,6 +1643,7 @@
 
             function renderBoard() {
                 const board = document.getElementById('sudoku-board');
+                if (!board) return;
                 board.innerHTML = '';
 
                 for (let i = 0; i < 81; i++) {
@@ -1614,23 +1671,28 @@
                 }
             }
 
-            window.inputSudokuNumber = function(num) {
+            function inputSudokuNumber(num) {
                 if (selectedIdx === null || puzzle[selectedIdx] !== 0) return;
                 playSound('click');
                 userGrid[selectedIdx] = num;
                 renderBoard();
-            };
+            }
 
-            window.sudokuHint = function() {
+            document.querySelectorAll('.sudoku-num-btn').forEach(btn => {
+                btn.onclick = () => inputSudokuNumber(parseInt(btn.dataset.num));
+            });
+
+            document.getElementById('sudoku-hint-btn').onclick = () => {
                 if (hintsUsed >= 3 || selectedIdx === null || puzzle[selectedIdx] !== 0) return;
                 userGrid[selectedIdx] = solution[selectedIdx];
                 hintsUsed++;
-                document.getElementById('hint-cnt').innerText = 3 - hintsUsed;
+                const hintCntElem = document.getElementById('hint-cnt');
+                if (hintCntElem) hintCntElem.innerText = 3 - hintsUsed;
                 playSound('correct');
                 renderBoard();
             };
 
-            window.checkSudokuComplete = function() {
+            document.getElementById('sudoku-validate-btn').onclick = () => {
                 let correct = true;
                 for (let i = 0; i < 81; i++) {
                     if (userGrid[i] !== solution[i]) {
@@ -1649,8 +1711,10 @@
                 } else {
                     playSound('error');
                     const stageContainer = document.getElementById('game-stage');
-                    stageContainer.classList.add('animate-shake');
-                    setTimeout(() => stageContainer.classList.remove('animate-shake'), 500);
+                    if (stageContainer) {
+                        stageContainer.classList.add('animate-shake');
+                        setTimeout(() => stageContainer.classList.remove('animate-shake'), 500);
+                    }
                 }
             };
 
@@ -1689,7 +1753,7 @@
                     <div class="flex items-center justify-between w-full bg-slate-900/80 px-4 py-2 rounded-2xl border border-slate-800">
                         <span class="text-xs text-slate-400">Place Next Number:</span>
                         <span id="hid-next" class="text-xl font-black text-emerald-400">2</span>
-                        <button onclick="resetHidato()" class="arcade-btn text-xs bg-slate-800 border border-slate-700 text-slate-300 px-3 py-1 rounded-xl">
+                        <button id="hidato-reset-btn" class="arcade-btn text-xs bg-slate-800 border border-slate-700 text-slate-300 px-3 py-1 rounded-xl">
                             Reset
                         </button>
                     </div>
@@ -1700,6 +1764,7 @@
 
             function renderHidato() {
                 const board = document.getElementById('hidato-board');
+                if (!board) return;
                 board.innerHTML = '';
 
                 let maxFilled = 1;
@@ -1707,7 +1772,8 @@
                     if (v > maxFilled && v < 16) maxFilled = v;
                 }
                 activeNum = maxFilled + 1;
-                document.getElementById('hid-next').innerText = activeNum <= 16 ? activeNum : 'Done!';
+                const nextElem = document.getElementById('hid-next');
+                if (nextElem) nextElem.innerText = activeNum <= 16 ? activeNum : 'Done!';
 
                 for (let i = 0; i < totalCells; i++) {
                     const val = userPath[i];
@@ -1739,7 +1805,7 @@
                 checkHidatoWin();
             }
 
-            window.resetHidato = function() {
+            document.getElementById('hidato-reset-btn').onclick = () => {
                 userPath = [...fixed];
                 renderHidato();
             };
@@ -1778,6 +1844,7 @@
             let currentSequence = "";
             let userInput = "";
             let isShowing = false;
+            let timeoutId = null;
 
             const stage = document.getElementById('game-stage');
             stage.innerHTML = `
@@ -1792,7 +1859,7 @@
 
                     <div id="seq-keypad" class="grid grid-cols-3 gap-3 w-full">
                         ${[1,2,3,4,5,6,7,8,9,0].map(num => `
-                            <button onclick="pressSeqNum('${num}')" class="arcade-btn h-12 bg-slate-800 hover:bg-slate-700 border border-slate-700 text-blue-300 font-extrabold rounded-2xl text-xl flex items-center justify-center shadow-md active:scale-95">
+                            <button data-num="${num}" class="seq-num-btn arcade-btn h-12 bg-slate-800 hover:bg-slate-700 border border-slate-700 text-blue-300 font-extrabold rounded-2xl text-xl flex items-center justify-center shadow-md active:scale-95">
                                 ${num}
                             </button>
                         `).join('')}
@@ -1808,31 +1875,33 @@
                     currentSequence += Math.floor(Math.random() * 10);
                 }
 
-                document.getElementById('seq-len').innerText = sequenceLength + " Digits";
+                const lenElem = document.getElementById('seq-len');
                 const display = document.getElementById('seq-display');
-                display.innerText = currentSequence;
+                if (lenElem) lenElem.innerText = sequenceLength + " Digits";
+                if (display) display.innerText = currentSequence;
                 playSound('pop');
 
-                setTimeout(() => {
-                    display.innerText = "???";
+                timeoutId = setTimeout(() => {
+                    const disp = document.getElementById('seq-display');
+                    if (disp) disp.innerText = "???";
                     isShowing = false;
                 }, 1000 + (sequenceLength * 350));
             }
 
-            window.pressSeqNum = function(num) {
+            function pressSeqNum(num) {
                 if (isShowing) return;
 
                 userInput += num;
                 playSound('click');
                 const display = document.getElementById('seq-display');
-                display.innerText = userInput;
+                if (display) display.innerText = userInput;
 
                 if (userInput.length === currentSequence.length) {
                     if (userInput === currentSequence) {
                         playSound('correct');
                         sequenceLength++;
                         triggerScoreFloater("+1 Level", 50, 40, 'text-blue-400');
-                        setTimeout(startRound, 800);
+                        timeoutId = setTimeout(startRound, 800);
                     } else {
                         playSound('error');
                         const finalDigits = sequenceLength - 1;
@@ -1844,9 +1913,17 @@
                         showResults(finalDigits + " Digits Reached", appState.scores.sequence + " Digits", startSequenceGame, stars);
                     }
                 }
-            };
+            }
+
+            document.querySelectorAll('.seq-num-btn').forEach(btn => {
+                btn.onclick = () => pressSeqNum(btn.dataset.num);
+            });
 
             startRound();
+
+            activeGame = {
+                cleanup: () => clearTimeout(timeoutId)
+            };
         }
 
         // Initialize App Hub Stats on Load
