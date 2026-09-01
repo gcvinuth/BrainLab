@@ -225,7 +225,7 @@
             <div class="space-y-3 text-center md:text-left z-10 max-w-xl">
                 <div class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-purple-500/20 border border-purple-400/40 text-purple-200 text-xs font-bold uppercase tracking-wider">
                     <span class="w-2 h-2 rounded-full bg-m3-secondary animate-ping"></span>
-                    <span>14 Expressive Brain Workouts</span>
+                    <span>18 Expressive Brain Workouts</span>
                 </div>
                 <h2 class="text-3xl md:text-5xl font-black font-display text-white tracking-tight leading-tight">
                     Supercharge Your Cognitive IQ
@@ -595,53 +595,100 @@
                 </div>
             </div>
 
-        </div>
-
-        <!-- PARTY GAMES SECTION -->
-        <div class="pt-6 border-t border-white/10 flex items-center gap-3">
-            <div class="w-11 h-11 rounded-2xl bg-gradient-to-tr from-rose-500 via-fuchsia-500 to-amber-400 flex items-center justify-center shadow-lg shadow-rose-500/30 animate-float-slow">
-                <i class="fa-solid fa-champagne-glasses text-white text-lg"></i>
-            </div>
-            <div>
-                <h2 class="text-2xl md:text-3xl font-black font-display text-white tracking-tight">Party Games</h2>
-                <p class="text-slate-400 text-xs font-medium">Pass-and-play games for the whole group &mdash; perfect for game night!</p>
-            </div>
-        </div>
-
-        <!-- Party Filter Pills (by player count) -->
-        <div class="flex items-center gap-2 overflow-x-auto no-scrollbar pb-1">
-            <button onclick="filterParty('all')" class="party-filter-btn m3-pill px-5 py-2.5 bg-m3-tertiary text-white text-xs font-bold shadow-lg shadow-pink-500/20">All Party Games</button>
-            <button onclick="filterParty('3-4')" class="party-filter-btn m3-pill px-5 py-2.5 bg-slate-900/80 hover:bg-slate-800 border border-slate-700 text-slate-300 text-xs font-bold">3-4 Players</button>
-            <button onclick="filterParty('5-8')" class="party-filter-btn m3-pill px-5 py-2.5 bg-slate-900/80 hover:bg-slate-800 border border-slate-700 text-slate-300 text-xs font-bold">5-8 Players</button>
-            <button onclick="filterParty('9-12')" class="party-filter-btn m3-pill px-5 py-2.5 bg-slate-900/80 hover:bg-slate-800 border border-slate-700 text-slate-300 text-xs font-bold">9-12 Players</button>
-        </div>
-
-        <!-- Party Game Cards Grid -->
-        <div id="party-cards-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-
-            <!-- Imposter Card -->
-            <div data-pmin="3" data-pmax="12" class="party-card game-card m3-surface m3-card expressive-shape-1 p-6 flex flex-col justify-between border-t-4 border-t-rose-500 hover:border-rose-400 shadow-xl">
+            <!-- 15. NEW! Whack-a-Mole -->
+            <div data-category="speed" class="game-card m3-surface m3-card expressive-shape-3 p-6 flex flex-col justify-between border-t-4 border-t-yellow-400 hover:border-yellow-300 shadow-xl">
                 <div>
                     <div class="flex justify-between items-start mb-4">
-                        <div class="w-14 h-14 rounded-2xl bg-rose-500/20 border border-rose-500/40 flex items-center justify-center text-rose-300 text-2xl shadow-inner">
-                            <i class="fa-solid fa-user-secret"></i>
+                        <div class="w-14 h-14 rounded-2xl bg-yellow-400/20 border border-yellow-400/40 flex items-center justify-center text-yellow-300 text-2xl shadow-inner">
+                            <i class="fa-solid fa-hammer"></i>
                         </div>
-                        <div class="flex items-center gap-2">
-                            <div class="flex items-center gap-1.5 bg-slate-800/80 border border-slate-700 px-3 py-1.5 rounded-full text-[11px] text-slate-300 font-bold">
-                                <i class="fa-solid fa-users text-rose-400"></i>
-                                <span>3-12</span>
-                            </div>
-                            <button onclick="openHowToPlay('imposter')" class="m3-btn text-xs bg-slate-800/80 hover:bg-slate-700 text-slate-300 w-8 h-8 rounded-full border border-slate-700 flex items-center justify-center">
-                                <i class="fa-solid fa-circle-info text-rose-400"></i>
-                            </button>
-                        </div>
+                        <button onclick="openHowToPlay('whackMole')" class="m3-btn text-xs bg-slate-800/80 hover:bg-slate-700 text-slate-300 px-3.5 py-1.5 rounded-full border border-slate-700 flex items-center gap-1.5">
+                            <i class="fa-solid fa-circle-info text-yellow-400"></i>
+                            <span>Rules</span>
+                        </button>
                     </div>
-                    <h3 class="text-2xl font-black font-display text-white mb-1">Imposter</h3>
-                    <p class="text-slate-400 text-xs leading-relaxed font-medium mb-4">Everyone shares a secret word except the Imposter. Pass the device, sneak a peek, then grill the group to unmask them!</p>
+                    <h3 class="text-2xl font-black font-display text-white mb-1">Whack-a-Mole</h3>
+                    <p class="text-slate-400 text-xs leading-relaxed font-medium mb-4">Tap the mole the instant it pops up — chain hits for a bigger combo!</p>
+                    <div class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-slate-900/80 border border-slate-700 text-[10px] text-slate-400 font-bold uppercase tracking-wider"><i class="fa-solid fa-mobile-screen-button text-yellow-400"></i> Mobile Friendly</div>
                 </div>
                 <div class="pt-4 border-t border-white/10 flex items-center justify-between">
-                    <div class="text-xs text-slate-400">Rounds Played: <span id="high-imposter" class="text-rose-400 font-extrabold font-display">0</span></div>
-                    <button onclick="startImposterSetup()" class="m3-btn px-6 py-2.5 rounded-full bg-gradient-to-r from-rose-500 to-fuchsia-600 text-white font-black text-xs shadow-lg shadow-rose-500/20 flex items-center gap-2">
+                    <div class="text-xs text-slate-400">Best: <span id="high-whackMole" class="text-yellow-400 font-extrabold font-display">0</span></div>
+                    <button onclick="startWhackMoleGame()" class="m3-btn px-6 py-2.5 rounded-full bg-gradient-to-r from-yellow-400 to-amber-400 text-slate-950 font-black text-xs shadow-lg shadow-yellow-400/20 flex items-center gap-2">
+                        <span>PLAY</span>
+                        <i class="fa-solid fa-play text-[10px]"></i>
+                    </button>
+                </div>
+            </div>
+
+            <!-- 16. NEW! Fruit Slice -->
+            <div data-category="speed" class="game-card m3-surface m3-card expressive-shape-1 p-6 flex flex-col justify-between border-t-4 border-t-teal-400 hover:border-teal-300 shadow-xl">
+                <div>
+                    <div class="flex justify-between items-start mb-4">
+                        <div class="w-14 h-14 rounded-2xl bg-teal-400/20 border border-teal-400/40 flex items-center justify-center text-teal-300 text-2xl shadow-inner">
+                            <i class="fa-solid fa-apple-whole"></i>
+                        </div>
+                        <button onclick="openHowToPlay('fruitSlice')" class="m3-btn text-xs bg-slate-800/80 hover:bg-slate-700 text-slate-300 px-3.5 py-1.5 rounded-full border border-slate-700 flex items-center gap-1.5">
+                            <i class="fa-solid fa-circle-info text-teal-400"></i>
+                            <span>Rules</span>
+                        </button>
+                    </div>
+                    <h3 class="text-2xl font-black font-display text-white mb-1">Fruit Slice</h3>
+                    <p class="text-slate-400 text-xs leading-relaxed font-medium mb-4">Swipe your finger to slice flying fruit — but don't touch the bombs!</p>
+                    <div class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-slate-900/80 border border-slate-700 text-[10px] text-slate-400 font-bold uppercase tracking-wider"><i class="fa-solid fa-mobile-screen-button text-teal-400"></i> Mobile Friendly</div>
+                </div>
+                <div class="pt-4 border-t border-white/10 flex items-center justify-between">
+                    <div class="text-xs text-slate-400">Best: <span id="high-fruitSlice" class="text-teal-400 font-extrabold font-display">0</span></div>
+                    <button onclick="startFruitSliceGame()" class="m3-btn px-6 py-2.5 rounded-full bg-gradient-to-r from-teal-400 to-emerald-500 text-slate-950 font-black text-xs shadow-lg shadow-teal-400/20 flex items-center gap-2">
+                        <span>PLAY</span>
+                        <i class="fa-solid fa-play text-[10px]"></i>
+                    </button>
+                </div>
+            </div>
+
+            <!-- 17. NEW! Snake Runner -->
+            <div data-category="logic" class="game-card m3-surface m3-card expressive-shape-2 p-6 flex flex-col justify-between border-t-4 border-t-green-400 hover:border-green-300 shadow-xl">
+                <div>
+                    <div class="flex justify-between items-start mb-4">
+                        <div class="w-14 h-14 rounded-2xl bg-green-400/20 border border-green-400/40 flex items-center justify-center text-green-300 text-2xl shadow-inner">
+                            <i class="fa-solid fa-gamepad"></i>
+                        </div>
+                        <button onclick="openHowToPlay('snake')" class="m3-btn text-xs bg-slate-800/80 hover:bg-slate-700 text-slate-300 px-3.5 py-1.5 rounded-full border border-slate-700 flex items-center gap-1.5">
+                            <i class="fa-solid fa-circle-info text-green-400"></i>
+                            <span>Rules</span>
+                        </button>
+                    </div>
+                    <h3 class="text-2xl font-black font-display text-white mb-1">Snake Runner</h3>
+                    <p class="text-slate-400 text-xs leading-relaxed font-medium mb-4">Classic snake logic — steer, plan ahead, and grow without crashing!</p>
+                    <div class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-slate-900/80 border border-slate-700 text-[10px] text-slate-400 font-bold uppercase tracking-wider"><i class="fa-solid fa-keyboard text-green-400"></i> PC / Keyboard</div>
+                </div>
+                <div class="pt-4 border-t border-white/10 flex items-center justify-between">
+                    <div class="text-xs text-slate-400">Best: <span id="high-snake" class="text-green-400 font-extrabold font-display">0</span></div>
+                    <button onclick="startSnakeGame()" class="m3-btn px-6 py-2.5 rounded-full bg-gradient-to-r from-green-400 to-emerald-500 text-slate-950 font-black text-xs shadow-lg shadow-green-400/20 flex items-center gap-2">
+                        <span>PLAY</span>
+                        <i class="fa-solid fa-play text-[10px]"></i>
+                    </button>
+                </div>
+            </div>
+
+            <!-- 18. NEW! Typing Rush -->
+            <div data-category="speed" class="game-card m3-surface m3-card expressive-shape-3 p-6 flex flex-col justify-between border-t-4 border-t-violet-400 hover:border-violet-300 shadow-xl">
+                <div>
+                    <div class="flex justify-between items-start mb-4">
+                        <div class="w-14 h-14 rounded-2xl bg-violet-400/20 border border-violet-400/40 flex items-center justify-center text-violet-300 text-2xl shadow-inner">
+                            <i class="fa-solid fa-keyboard"></i>
+                        </div>
+                        <button onclick="openHowToPlay('typingRush')" class="m3-btn text-xs bg-slate-800/80 hover:bg-slate-700 text-slate-300 px-3.5 py-1.5 rounded-full border border-slate-700 flex items-center gap-1.5">
+                            <i class="fa-solid fa-circle-info text-violet-400"></i>
+                            <span>Rules</span>
+                        </button>
+                    </div>
+                    <h3 class="text-2xl font-black font-display text-white mb-1">Typing Rush</h3>
+                    <p class="text-slate-400 text-xs leading-relaxed font-medium mb-4">Type the falling words as fast and accurately as you can before time runs out!</p>
+                    <div class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-slate-900/80 border border-slate-700 text-[10px] text-slate-400 font-bold uppercase tracking-wider"><i class="fa-solid fa-keyboard text-violet-400"></i> PC / Keyboard</div>
+                </div>
+                <div class="pt-4 border-t border-white/10 flex items-center justify-between">
+                    <div class="text-xs text-slate-400">Best: <span id="high-typingRush" class="text-violet-400 font-extrabold font-display">0</span></div>
+                    <button onclick="startTypingRushGame()" class="m3-btn px-6 py-2.5 rounded-full bg-gradient-to-r from-violet-400 to-purple-500 text-white font-black text-xs shadow-lg shadow-violet-400/20 flex items-center gap-2">
                         <span>PLAY</span>
                         <i class="fa-solid fa-play text-[10px]"></i>
                     </button>
@@ -763,7 +810,10 @@
                 sequence: parseInt(localStorage.getItem('bl_sequence') || 0),
                 gravityRun: parseInt(localStorage.getItem('bl_gravityRun') || 0),
                 cometDash: parseInt(localStorage.getItem('bl_cometDash') || 0),
-                imposter: parseInt(localStorage.getItem('bl_imposter') || 0)
+                whackMole: parseInt(localStorage.getItem('bl_whackMole') || 0),
+                fruitSlice: parseInt(localStorage.getItem('bl_fruitSlice') || 0),
+                snake: parseInt(localStorage.getItem('bl_snake') || 0),
+                typingRush: parseInt(localStorage.getItem('bl_typingRush') || 0)
             },
             played: parseInt(localStorage.getItem('bl_played') || 0)
         };
@@ -827,22 +877,6 @@
                         g.gain.exponentialRampToValueAtTime(0.01, now + idx * 0.09 + 0.3);
                         o.start(now + idx * 0.09);
                         o.stop(now + idx * 0.09 + 0.3);
-                    });
-                } else if (type === 'reveal') {
-                    // Smooth rising two-note chime for the slide-to-reveal card
-                    const notes = [660, 990];
-                    notes.forEach((freq, idx) => {
-                        const o = audioCtx.createOscillator();
-                        const g = audioCtx.createGain();
-                        o.connect(g);
-                        g.connect(audioCtx.destination);
-                        o.type = 'sine';
-                        o.frequency.setValueAtTime(freq, now + idx * 0.08);
-                        g.gain.setValueAtTime(0.001, now + idx * 0.08);
-                        g.gain.linearRampToValueAtTime(0.16, now + idx * 0.08 + 0.03);
-                        g.gain.exponentialRampToValueAtTime(0.01, now + idx * 0.08 + 0.28);
-                        o.start(now + idx * 0.08);
-                        o.stop(now + idx * 0.08 + 0.28);
                     });
                 }
             } catch (e) {
@@ -985,8 +1019,10 @@
             document.getElementById('high-sequence').innerText = appState.scores.sequence > 0 ? appState.scores.sequence + ' Digits' : '0 Digits';
             document.getElementById('high-gravityRun').innerText = appState.scores.gravityRun;
             document.getElementById('high-cometDash').innerText = appState.scores.cometDash;
-            const impElem = document.getElementById('high-imposter');
-            if (impElem) impElem.innerText = appState.scores.imposter;
+            document.getElementById('high-whackMole').innerText = appState.scores.whackMole;
+            document.getElementById('high-fruitSlice').innerText = appState.scores.fruitSlice;
+            document.getElementById('high-snake').innerText = appState.scores.snake;
+            document.getElementById('high-typingRush').innerText = appState.scores.typingRush;
 
             let totalScore = 0;
             Object.keys(appState.scores).forEach(key => {
@@ -994,8 +1030,6 @@
                     if (appState.scores[key] > 0) totalScore += Math.max(0, 400 - appState.scores[key]);
                 } else if (key === 'sequence') {
                     totalScore += appState.scores[key] * 50;
-                } else if (key === 'imposter') {
-                    totalScore += appState.scores[key] * 5;
                 } else {
                     totalScore += appState.scores[key];
                 }
@@ -1019,33 +1053,6 @@
             const cards = document.querySelectorAll('#game-cards-grid .game-card');
             cards.forEach(card => {
                 if (category === 'all' || card.dataset.category === category) {
-                    card.classList.remove('hidden');
-                } else {
-                    card.classList.add('hidden');
-                }
-            });
-        }
-
-        function filterParty(range) {
-            playSound('click');
-            const btns = document.querySelectorAll('.party-filter-btn');
-            btns.forEach(b => {
-                b.className = "party-filter-btn m3-pill px-5 py-2.5 bg-slate-900/80 hover:bg-slate-800 border border-slate-700 text-slate-300 text-xs font-bold transition";
-            });
-            event.target.className = "party-filter-btn m3-pill px-5 py-2.5 bg-m3-tertiary text-white text-xs font-bold shadow-lg shadow-pink-500/20";
-
-            let fmin = 1, fmax = 99;
-            if (range !== 'all') {
-                const parts = range.split('-');
-                fmin = parseInt(parts[0]);
-                fmax = parseInt(parts[1]);
-            }
-
-            const cards = document.querySelectorAll('#party-cards-grid .party-card');
-            cards.forEach(card => {
-                const pmin = parseInt(card.dataset.pmin);
-                const pmax = parseInt(card.dataset.pmax);
-                if (range === 'all' || (pmin <= fmax && pmax >= fmin)) {
                     card.classList.remove('hidden');
                 } else {
                     card.classList.add('hidden');
@@ -1213,15 +1220,49 @@
                     "💠 Fly through cyan energy orbs for bonus points and a shield charge."
                 ]
             },
-            imposter: {
-                title: "Imposter",
-                icon: "fa-user-secret",
-                color: "text-rose-400",
+            whackMole: {
+                title: "Whack-a-Mole",
+                icon: "fa-hammer",
+                color: "text-yellow-400",
                 rules: [
-                    "👥 Set the player count and pass one device around the circle.",
-                    "🚪 Each player turns the doorknob to privately see the secret word — except the Imposter(s), who only see the category!",
-                    "🗣️ Discuss out loud as a group, then tap 'Discussion Over' whenever you're ready.",
-                    "🗳️ Vote together on who you think the Imposter is, then reveal the truth!"
+                    "🦔 Moles pop up from the 3x3 burrows — tap them before they hide!",
+                    "⚡ Chain rapid whacks without missing to build up to a 5x Combo Multiplier.",
+                    "👑 Golden Moles grant +30 points and +1s extra bonus time!",
+                    "💣 Avoid hitting Bomb Moles — they deduct -20 points and cost -3s time penalty."
+                ]
+            },
+            fruitSlice: {
+                title: "Fruit Slice",
+                icon: "fa-apple-whole",
+                color: "text-teal-400",
+                rules: [
+                    "🍉 Drag / swipe your blade across flying fruits to slice them in half!",
+                    "✨ Slice 3 or more fruits in a single swipe for massive Combo Bonus points.",
+                    "🌈 Slice Rainbow Frenzy Starfruit for 4s Slow-Motion and 2x Double Points!",
+                    "💣 Don't slice Bombs! Slicing bombs or dropping 3 fruits will cost you strikes."
+                ]
+            },
+            snake: {
+                title: "Snake Runner",
+                icon: "fa-gamepad",
+                color: "text-green-400",
+                rules: [
+                    "🐍 Steer with Arrow Keys, WASD, swipe gestures, or the on-screen D-Pad.",
+                    "🍎 Gobble glowing energy apples to grow longer and stack high scores.",
+                    "💎 Grab Golden Stars, Magnet orbs, and 2x Multipliers.",
+                    "⚡ Hold SPACE or Boost button to sprint for high-speed bonus points!",
+                    "💀 Don't crash into the perimeter walls or your own tail."
+                ]
+            },
+            typingRush: {
+                title: "Typing Rush",
+                icon: "fa-keyboard",
+                color: "text-violet-400",
+                rules: [
+                    "⌨️ Words fall from the top of the cyberpunk matrix.",
+                    "⚡ Type the matching letters on your keyboard to target and destroy words.",
+                    "🔥 Chain accurate words to activate 5x Overdrive Multipliers and Laser Blasts!",
+                    "🛡️ Defend your 3-layer energy shield from falling word breaches."
                 ]
             }
         };
@@ -3663,385 +3704,1492 @@
         }
 
         // =========================================================================
-        // PARTY GAME: IMPOSTER
+        // 15. WHACK-A-MOLE (Reflex Reaction Combo Arcade)
         // =========================================================================
-        const imposterCategories = {
-            food: { label: "Food", icon: "fa-pizza-slice", words: ["Pizza", "Sushi", "Burger", "Pasta", "Tacos", "Ice Cream", "Pancakes", "Curry", "Ramen", "Sandwich", "Dumplings", "Waffles", "Steak", "Salad", "Donut"] },
-            animals: { label: "Animals", icon: "fa-paw", words: ["Elephant", "Lion", "Penguin", "Dolphin", "Kangaroo", "Giraffe", "Octopus", "Tiger", "Panda", "Owl", "Shark", "Fox", "Koala", "Rabbit", "Zebra"] },
-            movies: { label: "Movies", icon: "fa-film", words: ["Titanic", "Inception", "Jaws", "Frozen", "Avatar", "Gladiator", "The Matrix", "Rocky", "Shrek", "Up", "Coco", "Joker", "Dune", "Alien", "Grease"] },
-            countries: { label: "Countries", icon: "fa-earth-americas", words: ["Japan", "Brazil", "Egypt", "Canada", "France", "India", "Kenya", "Mexico", "Norway", "Peru", "Spain", "Thailand", "Turkey", "Greece", "Iceland"] },
-            sports: { label: "Sports", icon: "fa-futbol", words: ["Soccer", "Tennis", "Basketball", "Boxing", "Cricket", "Golf", "Swimming", "Rugby", "Hockey", "Skiing", "Surfing", "Volleyball", "Baseball", "Cycling", "Archery"] },
-            objects: { label: "Objects", icon: "fa-lightbulb", words: ["Umbrella", "Backpack", "Camera", "Guitar", "Bicycle", "Telescope", "Compass", "Candle", "Mirror", "Wallet", "Balloon", "Ladder", "Anchor", "Kite", "Lantern"] }
-        };
-
-        let imposterGame = { players: 4, numImposters: 1, categoryKey: 'random', order: [], word: '', categoryLabel: '', currentIdx: 0, votedIdx: null };
-
-        function maxImpostersFor(players) {
-            if (players >= 10) return 3;
-            if (players >= 6) return 2;
-            return 1;
-        }
-
-        function startImposterSetup() {
+        function startWhackMoleGame() {
             switchView('game');
-            document.getElementById('game-title').innerText = "Imposter";
-            document.getElementById('btn-how-to-play-in-game').onclick = () => openHowToPlay('imposter');
+            document.getElementById('game-title').innerText = "Whack-a-Mole";
+            document.getElementById('btn-how-to-play-in-game').onclick = () => openHowToPlay('whackMole');
 
-            const catKeys = Object.keys(imposterCategories);
-            const maxImp = maxImpostersFor(imposterGame.players);
             const stage = document.getElementById('game-stage');
-
             stage.innerHTML = `
-                <div class="w-full max-w-lg flex flex-col items-center space-y-6">
-                    <div class="text-center">
-                        <i class="fa-solid fa-user-secret text-rose-400 text-4xl mb-2"></i>
-                        <h3 class="text-2xl font-black font-display text-white">Set Up Your Round</h3>
-                        <p class="text-slate-400 text-xs mt-1">Everyone gets the secret word &mdash; except the Imposter(s)!</p>
-                    </div>
-
-                    <div class="w-full bg-slate-900/80 rounded-3xl p-5 border border-white/10 space-y-6">
-                        <div>
-                            <div class="flex justify-between items-center mb-2">
-                                <span class="text-xs font-bold text-slate-300 uppercase tracking-wider">Players</span>
-                                <span class="text-xl font-black font-display text-rose-400">${imposterGame.players}</span>
+                <div id="wm-shake" class="w-full max-w-xl flex flex-col items-center select-none relative">
+                    <!-- Top HUD -->
+                    <div class="w-full flex justify-between items-center bg-slate-900/90 px-4 md:px-6 py-2.5 rounded-full border border-yellow-500/30 shadow-lg mb-4">
+                        <div class="flex items-center gap-4">
+                            <div>
+                                <span class="text-[10px] text-slate-400 font-bold uppercase tracking-wider block">Time</span>
+                                <span id="wm-time" class="text-xl md:text-2xl font-black font-display text-yellow-400">30s</span>
                             </div>
-                            <div class="flex items-center gap-3">
-                                <button onclick="adjustImpPlayers(-1)" class="m3-btn w-11 h-11 rounded-2xl bg-slate-800 hover:bg-slate-700 border border-slate-700 text-white text-lg font-bold">-</button>
-                                <div class="flex-1 h-2 rounded-full bg-slate-800 relative overflow-hidden">
-                                    <div class="h-full bg-gradient-to-r from-rose-500 to-pink-500 rounded-full" style="width:${((imposterGame.players - 3) / 9) * 100}%"></div>
-                                </div>
-                                <button onclick="adjustImpPlayers(1)" class="m3-btn w-11 h-11 rounded-2xl bg-slate-800 hover:bg-slate-700 border border-slate-700 text-white text-lg font-bold">+</button>
+                            <div>
+                                <span class="text-[10px] text-slate-400 font-bold uppercase tracking-wider block">Score</span>
+                                <span id="wm-score" class="text-xl md:text-2xl font-black font-display text-white">0</span>
                             </div>
                         </div>
-
-                        <div>
-                            <div class="flex justify-between items-center mb-2">
-                                <span class="text-xs font-bold text-slate-300 uppercase tracking-wider">Imposters</span>
-                                <span class="text-xl font-black font-display text-rose-400">${imposterGame.numImposters}</span>
-                            </div>
-                            <div class="flex items-center gap-3">
-                                <button onclick="adjustImpCount(-1)" class="m3-btn w-11 h-11 rounded-2xl bg-slate-800 hover:bg-slate-700 border border-slate-700 text-white text-lg font-bold">-</button>
-                                <div class="flex-1 h-2 rounded-full bg-slate-800 relative overflow-hidden">
-                                    <div class="h-full bg-gradient-to-r from-amber-400 to-rose-500 rounded-full" style="width:${(imposterGame.numImposters / maxImp) * 100}%"></div>
-                                </div>
-                                <button onclick="adjustImpCount(1)" class="m3-btn w-11 h-11 rounded-2xl bg-slate-800 hover:bg-slate-700 border border-slate-700 text-white text-lg font-bold">+</button>
-                            </div>
-                        </div>
-
-                        <div>
-                            <span class="text-xs font-bold text-slate-300 uppercase tracking-wider block mb-2">Category</span>
-                            <div class="flex flex-wrap gap-2">
-                                <button onclick="selectImpCategory('random')" class="imp-cat-chip m3-pill px-4 py-2 text-xs font-bold border ${imposterGame.categoryKey === 'random' ? 'bg-m3-tertiary text-white border-transparent' : 'bg-slate-800 text-slate-300 border-slate-700'}"><i class="fa-solid fa-shuffle mr-1.5"></i>Random</button>
-                                ${catKeys.map(k => `<button onclick="selectImpCategory('${k}')" class="imp-cat-chip m3-pill px-4 py-2 text-xs font-bold border ${imposterGame.categoryKey === k ? 'bg-m3-tertiary text-white border-transparent' : 'bg-slate-800 text-slate-300 border-slate-700'}"><i class="fa-solid ${imposterCategories[k].icon} mr-1.5"></i>${imposterCategories[k].label}</button>`).join('')}
+                        <div class="flex items-center gap-3">
+                            <div id="wm-combo-badge" class="px-3.5 py-1 rounded-full bg-yellow-400/20 border border-yellow-400/40 text-yellow-300 text-xs font-black tracking-wider transition-all duration-200">
+                                1x COMBO
                             </div>
                         </div>
                     </div>
 
-                    <button onclick="startImposterRound()" class="m3-btn w-full py-4 rounded-full bg-gradient-to-r from-rose-500 via-pink-500 to-fuchsia-500 text-white font-black text-sm shadow-lg shadow-rose-500/30 flex items-center justify-center gap-2">
-                        <span>START ROUND</span>
-                        <i class="fa-solid fa-play"></i>
-                    </button>
+                    <!-- Progress Bar -->
+                    <div class="w-full h-2 bg-slate-800 rounded-full overflow-hidden mb-6 border border-slate-700/60">
+                        <div id="wm-progress" class="h-full bg-gradient-to-r from-yellow-400 to-amber-500 transition-all duration-300 w-full"></div>
+                    </div>
+
+                    <!-- 3x3 Mole Holes Grid -->
+                    <div id="wm-grid" class="grid grid-cols-3 gap-3 md:gap-5 w-full max-w-md aspect-square p-3 bg-gradient-to-b from-amber-950/40 to-slate-950/80 rounded-4xl border-2 border-amber-700/30 shadow-2xl backdrop-blur-md">
+                        <!-- 9 Hole Containers generated below -->
+                    </div>
                 </div>
             `;
 
-            activeGame = { cleanup: () => {} };
-        }
+            const grid = document.getElementById('wm-grid');
+            const holes = [];
 
-        function adjustImpPlayers(delta) {
-            playSound('click');
-            imposterGame.players = Math.max(3, Math.min(12, imposterGame.players + delta));
-            const maxImp = maxImpostersFor(imposterGame.players);
-            if (imposterGame.numImposters > maxImp) imposterGame.numImposters = maxImp;
-            startImposterSetup();
-        }
-
-        function adjustImpCount(delta) {
-            playSound('click');
-            const maxImp = maxImpostersFor(imposterGame.players);
-            imposterGame.numImposters = Math.max(1, Math.min(maxImp, imposterGame.numImposters + delta));
-            startImposterSetup();
-        }
-
-        function selectImpCategory(key) {
-            playSound('click');
-            imposterGame.categoryKey = key;
-            startImposterSetup();
-        }
-
-        function startImposterRound() {
-            playSound('click');
-            const catKeys = Object.keys(imposterCategories);
-            let catKey = imposterGame.categoryKey;
-            if (catKey === 'random') catKey = catKeys[Math.floor(Math.random() * catKeys.length)];
-            const cat = imposterCategories[catKey];
-            const word = cat.words[Math.floor(Math.random() * cat.words.length)];
-
-            const idxs = Array.from({ length: imposterGame.players }, (_, i) => i);
-            for (let i = idxs.length - 1; i > 0; i--) {
-                const j = Math.floor(Math.random() * (i + 1));
-                [idxs[i], idxs[j]] = [idxs[j], idxs[i]];
-            }
-            const imposterSet = new Set(idxs.slice(0, imposterGame.numImposters));
-
-            imposterGame.order = Array.from({ length: imposterGame.players }, (_, i) => ({ isImposter: imposterSet.has(i) }));
-            imposterGame.word = word;
-            imposterGame.categoryLabel = cat.label;
-            imposterGame.currentIdx = 0;
-
-            renderImposterPass();
-        }
-
-        function renderImposterCardContent(isImposter, categoryLabel, word) {
-            if (isImposter) {
-                return `
-                    <div class="px-3 py-1 rounded-full bg-slate-800 border border-slate-700 text-[10px] text-slate-400 font-bold uppercase tracking-wider mb-3">${categoryLabel}</div>
-                    <i class="fa-solid fa-user-secret text-rose-400 text-4xl mb-2 animate-pulse-glow"></i>
-                    <span class="text-2xl font-black font-display text-rose-300">YOU'RE THE IMPOSTER</span>
-                    <p class="text-slate-400 text-[11px] mt-2 max-w-[240px]">You don't know the word. Blend in and guess it from the group's clues!</p>
+            for (let i = 0; i < 9; i++) {
+                const hole = document.createElement('div');
+                hole.className = "relative rounded-3xl bg-slate-950/90 border-2 border-amber-900/40 shadow-inner overflow-hidden flex items-end justify-center cursor-pointer group active:scale-95 transition-transform";
+                hole.innerHTML = `
+                    <!-- Ground Rim -->
+                    <div class="absolute inset-x-0 bottom-0 h-4 bg-amber-950/80 rounded-b-3xl border-t border-amber-800/40 z-20 pointer-events-none"></div>
+                    <!-- Mole Creature Holder -->
+                    <div id="wm-mole-${i}" class="w-20 h-24 md:w-24 md:h-28 flex flex-col items-center justify-center transform translate-y-full transition-transform duration-200 ease-out z-10 select-none">
+                        <!-- Dynamic mole content injected here -->
+                    </div>
                 `;
+                hole.onclick = () => onHoleClick(i);
+                grid.appendChild(hole);
+                holes.push({
+                    el: document.getElementById(`wm-mole-${i}`),
+                    active: false,
+                    type: 'normal',
+                    timer: null
+                });
             }
-            return `
-                <div class="px-3 py-1 rounded-full bg-slate-800 border border-slate-700 text-[10px] text-slate-400 font-bold uppercase tracking-wider mb-3">${categoryLabel}</div>
-                <span class="text-3xl md:text-4xl font-black font-display text-white">${word}</span>
-                <p class="text-slate-500 text-[11px] mt-2">Remember it &mdash; don't say it out loud!</p>
-            `;
+
+            let score = 0;
+            let combo = 1;
+            let streak = 0;
+            let timeLeft = 30;
+            let gameEnded = false;
+            let spawnTimer = null;
+            let countdownTimer = null;
+            const shakeEl = document.getElementById('wm-shake');
+            const scoreEl = document.getElementById('wm-score');
+            const timeEl = document.getElementById('wm-time');
+            const progressEl = document.getElementById('wm-progress');
+            const comboBadge = document.getElementById('wm-combo-badge');
+
+            function updateComboUI() {
+                if (combo > 1) {
+                    comboBadge.innerText = `${combo}x COMBO 🔥`;
+                    comboBadge.className = "px-3.5 py-1 rounded-full bg-gradient-to-r from-amber-400 to-yellow-400 text-slate-950 text-xs font-black shadow-lg shadow-yellow-400/30 scale-105 transition-transform";
+                } else {
+                    comboBadge.innerText = "1x COMBO";
+                    comboBadge.className = "px-3.5 py-1 rounded-full bg-yellow-400/20 border border-yellow-400/40 text-yellow-300 text-xs font-black tracking-wider transition-all";
+                }
+            }
+
+            function popMole() {
+                if (gameEnded) return;
+
+                const inactiveHoles = holes.map((h, idx) => ({ h, idx })).filter(item => !item.h.active);
+                if (inactiveHoles.length === 0) return;
+
+                const chosen = inactiveHoles[Math.floor(Math.random() * inactiveHoles.length)];
+                const holeObj = chosen.h;
+                const holeIdx = chosen.idx;
+
+                const rand = Math.random();
+                let type = 'normal';
+                if (rand < 0.15) {
+                    type = 'bomb';
+                } else if (rand < 0.35) {
+                    type = 'golden';
+                }
+
+                holeObj.active = true;
+                holeObj.type = type;
+
+                if (type === 'normal') {
+                    holeObj.el.innerHTML = `
+                        <div class="w-16 h-20 md:w-20 md:h-24 bg-gradient-to-b from-amber-700 to-amber-900 rounded-t-full border-2 border-amber-500/60 shadow-lg flex flex-col items-center justify-start pt-2 relative shadow-amber-900/50">
+                            <!-- Ears -->
+                            <div class="absolute -top-1 left-1.5 w-4 h-4 bg-amber-800 rounded-full border border-amber-600"></div>
+                            <div class="absolute -top-1 right-1.5 w-4 h-4 bg-amber-800 rounded-full border border-amber-600"></div>
+                            <!-- Eyes -->
+                            <div class="flex gap-3 mb-1 mt-1">
+                                <div class="w-2.5 h-2.5 bg-slate-900 rounded-full border border-white/80"></div>
+                                <div class="w-2.5 h-2.5 bg-slate-900 rounded-full border border-white/80"></div>
+                            </div>
+                            <!-- Pink Nose -->
+                            <div class="w-3.5 h-2.5 bg-pink-400 rounded-full shadow"></div>
+                            <!-- Cute Cheeks -->
+                            <div class="w-8 h-1 bg-amber-950/60 rounded-full mt-1.5"></div>
+                        </div>
+                    `;
+                } else if (type === 'golden') {
+                    holeObj.el.innerHTML = `
+                        <div class="w-16 h-20 md:w-20 md:h-24 bg-gradient-to-b from-yellow-300 via-amber-400 to-yellow-500 rounded-t-full border-2 border-yellow-100 shadow-xl flex flex-col items-center justify-start pt-1.5 relative animate-pulse shadow-yellow-400/60">
+                            <!-- Golden Crown -->
+                            <div class="text-amber-200 text-sm -mt-2.5 filter drop-shadow"><i class="fa-solid fa-crown"></i></div>
+                            <!-- Eyes -->
+                            <div class="flex gap-3 mb-1 mt-0.5">
+                                <div class="w-2.5 h-2.5 bg-slate-900 rounded-full border border-yellow-200"></div>
+                                <div class="w-2.5 h-2.5 bg-slate-900 rounded-full border border-yellow-200"></div>
+                            </div>
+                            <!-- Sparkle Star Nose -->
+                            <div class="w-3.5 h-2.5 bg-amber-100 rounded-full shadow"></div>
+                            <div class="text-[9px] font-black text-slate-950 uppercase tracking-tighter mt-1 bg-white/70 px-1 rounded">+30 PTS</div>
+                        </div>
+                    `;
+                } else if (type === 'bomb') {
+                    holeObj.el.innerHTML = `
+                        <div class="w-16 h-20 md:w-20 md:h-24 bg-gradient-to-b from-red-600 via-slate-900 to-black rounded-t-full border-2 border-red-500/80 shadow-xl flex flex-col items-center justify-start pt-1 relative animate-pulse shadow-red-500/50">
+                            <!-- Burning Fuse -->
+                            <div class="w-1.5 h-3 bg-amber-600 -mt-2 rounded-t flex items-center justify-center">
+                                <div class="w-3 h-3 rounded-full bg-yellow-400 animate-ping"></div>
+                            </div>
+                            <div class="text-red-400 text-lg mb-0.5"><i class="fa-solid fa-bomb"></i></div>
+                            <div class="text-[9px] font-black text-red-300 uppercase tracking-widest bg-red-950/80 px-1.5 rounded border border-red-500/40">DANGER</div>
+                        </div>
+                    `;
+                }
+
+                // Animate pop up
+                holeObj.el.classList.remove('translate-y-full');
+                holeObj.el.classList.add('translate-y-0');
+
+                // Dynamic stay duration (gets faster over time)
+                const stayDuration = Math.max(500, 1100 - (30 - timeLeft) * 20);
+
+                holeObj.timer = setTimeout(() => {
+                    hideMole(holeIdx, false);
+                }, stayDuration);
+            }
+
+            function hideMole(idx, wasWhacked) {
+                const holeObj = holes[idx];
+                if (!holeObj.active) return;
+                clearTimeout(holeObj.timer);
+
+                if (!wasWhacked && (holeObj.type === 'normal' || holeObj.type === 'golden')) {
+                    // Missed mole resets combo
+                    combo = 1;
+                    streak = 0;
+                    updateComboUI();
+                }
+
+                holeObj.el.classList.remove('translate-y-0');
+                holeObj.el.classList.add('translate-y-full');
+                holeObj.active = false;
+            }
+
+            function onHoleClick(idx) {
+                if (gameEnded) return;
+                const holeObj = holes[idx];
+                if (!holeObj.active) return;
+
+                const rect = holeObj.el.getBoundingClientRect();
+                const stageRect = stage.getBoundingClientRect();
+                const posX = ((rect.left + rect.width / 2 - stageRect.left) / stageRect.width) * 100;
+                const posY = ((rect.top + rect.height / 2 - stageRect.top) / stageRect.height) * 100;
+
+                if (holeObj.type === 'normal') {
+                    streak++;
+                    if (streak >= 3 && combo < 5) {
+                        combo++;
+                        streak = 0;
+                    }
+                    const points = 10 * combo;
+                    score += points;
+                    scoreEl.innerText = score;
+                    playSound('pop', combo);
+                    triggerScoreFloater(`+${points}`, posX, posY, 'text-yellow-300');
+                    updateComboUI();
+                    hideMole(idx, true);
+                } else if (holeObj.type === 'golden') {
+                    streak += 2;
+                    if (streak >= 3 && combo < 5) {
+                        combo = Math.min(5, combo + 1);
+                        streak = 0;
+                    }
+                    const points = 30 * combo;
+                    score += points;
+                    timeLeft = Math.min(35, timeLeft + 1);
+                    timeEl.innerText = timeLeft + 's';
+                    scoreEl.innerText = score;
+                    playSound('fanfare');
+                    triggerScoreFloater(`+${points} (+1s!)`, posX, posY, 'text-amber-300');
+                    updateComboUI();
+                    hideMole(idx, true);
+                } else if (holeObj.type === 'bomb') {
+                    combo = 1;
+                    streak = 0;
+                    score = Math.max(0, score - 20);
+                    timeLeft = Math.max(0, timeLeft - 3);
+                    timeEl.innerText = timeLeft + 's';
+                    scoreEl.innerText = score;
+                    playSound('error');
+                    triggerScoreFloater("-20 (-3s!)", posX, posY, 'text-rose-500');
+                    if (shakeEl) {
+                        shakeEl.classList.remove('animate-shake-spring');
+                        void shakeEl.offsetWidth;
+                        shakeEl.classList.add('animate-shake-spring');
+                    }
+                    updateComboUI();
+                    hideMole(idx, true);
+                }
+            }
+
+            function gameTick() {
+                if (gameEnded) return;
+                timeLeft--;
+                timeEl.innerText = timeLeft + 's';
+                progressEl.style.width = `${(timeLeft / 30) * 100}%`;
+
+                if (timeLeft <= 0) {
+                    endGame();
+                }
+            }
+
+            function endGame() {
+                if (gameEnded) return;
+                gameEnded = true;
+                clearInterval(countdownTimer);
+                clearInterval(spawnTimer);
+                holes.forEach((_, idx) => hideMole(idx, true));
+
+                if (score > appState.scores.whackMole) {
+                    appState.scores.whackMole = score;
+                    localStorage.setItem('bl_whackMole', score);
+                }
+
+                const stars = score >= 280 ? 3 : score >= 120 ? 2 : 1;
+                setTimeout(() => {
+                    showResults(score + " Pts", appState.scores.whackMole + " Pts", startWhackMoleGame, stars);
+                }, 300);
+            }
+
+            // Start intervals
+            countdownTimer = setInterval(gameTick, 1000);
+            spawnTimer = setInterval(() => {
+                const count = timeLeft < 10 ? 2 : 1;
+                for (let c = 0; c < count; c++) popMole();
+            }, 650);
+
+            // Pop first mole right away
+            popMole();
+
+            activeGame = {
+                cleanup: () => {
+                    gameEnded = true;
+                    clearInterval(countdownTimer);
+                    clearInterval(spawnTimer);
+                    holes.forEach(h => clearTimeout(h.timer));
+                }
+            };
         }
 
-        function renderImposterPass() {
+        // =========================================================================
+        // 16. FRUIT SLICE (Katana Blade Physics & Particle Splash Slicer)
+        // =========================================================================
+        function startFruitSliceGame() {
+            switchView('game');
+            document.getElementById('game-title').innerText = "Fruit Slice";
+            document.getElementById('btn-how-to-play-in-game').onclick = () => openHowToPlay('fruitSlice');
+
             const stage = document.getElementById('game-stage');
-            const idx = imposterGame.currentIdx;
-            const isLast = idx === imposterGame.players - 1;
-
             stage.innerHTML = `
-                <div class="w-full max-w-md flex flex-col items-center space-y-6">
-                    <div class="text-center">
-                        <div class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-rose-500/20 border border-rose-400/40 text-rose-300 text-xs font-bold uppercase tracking-wider mb-2">
-                            <i class="fa-solid fa-mobile-screen-button"></i><span>Pass the device</span>
-                        </div>
-                        <h3 class="text-3xl font-black font-display text-white">Player ${idx + 1} <span class="text-slate-500 text-lg">/ ${imposterGame.players}</span></h3>
-                        <p class="text-slate-400 text-xs mt-1">Make sure no one else is peeking!</p>
-                    </div>
-
-                    <div id="imp-wrap" class="relative w-full h-56 rounded-4xl overflow-hidden border-2 border-rose-400/30 shadow-2xl bg-slate-950">
-                        <div class="absolute inset-0 flex flex-col items-center justify-center p-6 text-center">
-                            ${renderImposterCardContent(imposterGame.order[idx].isImposter, imposterGame.categoryLabel, imposterGame.word)}
-                        </div>
-                        <div id="imp-cover" class="absolute inset-0 flex items-center bg-gradient-to-br from-slate-800 via-slate-900 to-slate-950">
-                            <div class="flex-1 text-center px-16 pointer-events-none">
-                                <i class="fa-solid fa-lock text-slate-600 text-2xl mb-2"></i>
-                                <p class="text-slate-400 text-xs font-bold uppercase tracking-widest">Slide to reveal</p>
+                <div id="fs-shake" class="w-full h-full flex flex-col items-stretch relative">
+                    <!-- Top HUD -->
+                    <div class="w-full flex justify-between items-center bg-slate-900/90 px-4 md:px-6 py-2 rounded-full border border-teal-500/30 z-10 mb-3 shadow-lg">
+                        <div class="flex items-center gap-4">
+                            <div>
+                                <span class="text-[10px] text-slate-400 font-bold uppercase">Score</span>
+                                <span id="fs-score" class="text-xl font-black font-display text-teal-300 block">0</span>
+                            </div>
+                            <div id="fs-frenzy-badge" class="hidden px-3 py-0.5 rounded-full bg-gradient-to-r from-pink-500 to-yellow-400 text-slate-950 text-xs font-black animate-pulse">
+                                🌈 2X FRENZY!
                             </div>
                         </div>
-                        <div id="imp-handle" class="absolute left-2 top-1/2 w-16 h-16 rounded-2xl bg-gradient-to-tr from-rose-500 to-pink-500 shadow-lg shadow-rose-500/40 flex items-center justify-center cursor-grab active:scale-95" style="touch-action:none; transform: translate(0px,-50%);">
-                            <i class="fa-solid fa-chevron-right text-white text-lg"></i>
+                        <!-- Lives / Strikes -->
+                        <div class="flex items-center gap-1.5">
+                            <span class="text-xs text-slate-400 font-bold uppercase mr-1">Strikes:</span>
+                            <span id="fs-strike-1" class="text-slate-600 text-lg"><i class="fa-solid fa-xmark"></i></span>
+                            <span id="fs-strike-2" class="text-slate-600 text-lg"><i class="fa-solid fa-xmark"></i></span>
+                            <span id="fs-strike-3" class="text-slate-600 text-lg"><i class="fa-solid fa-xmark"></i></span>
                         </div>
                     </div>
 
-                    <button id="imp-next-btn" onclick="imposterNextPlayer()" class="m3-btn opacity-0 pointer-events-none translate-y-2 px-8 py-3.5 rounded-full bg-gradient-to-r from-m3-primary to-m3-tertiary text-white font-black text-sm shadow-lg shadow-purple-500/30 transition-all duration-300">
-                        <span>${isLast ? 'Everyone Saw It — Start Discussion' : 'Got It — Next Player'}</span> <i class="fa-solid fa-arrow-right ml-1"></i>
-                    </button>
+                    <!-- Canvas Stage -->
+                    <div class="flex-1 rounded-3xl overflow-hidden border border-slate-800 relative bg-gradient-to-b from-teal-950/30 via-slate-950 to-slate-900/80 shadow-2xl">
+                        <canvas id="fs-canvas" class="w-full h-full block touch-none cursor-crosshair"></canvas>
+                    </div>
                 </div>
             `;
 
-            setupImposterSlide(() => {
-                const btn = document.getElementById('imp-next-btn');
-                if (btn) btn.classList.remove('opacity-0', 'pointer-events-none', 'translate-y-2');
-            });
+            const canvas = document.getElementById('fs-canvas');
+            const ctx = canvas.getContext('2d');
+            const wrap = canvas.parentElement;
+            const scoreEl = document.getElementById('fs-score');
+            const frenzyBadge = document.getElementById('fs-frenzy-badge');
+            const shakeEl = document.getElementById('fs-shake');
+
+            let dpr = Math.min(window.devicePixelRatio || 1, 2);
+            function resize() {
+                const w = wrap.clientWidth, h = wrap.clientHeight;
+                canvas.width = w * dpr;
+                canvas.height = h * dpr;
+                canvas.style.width = w + 'px';
+                canvas.style.height = h + 'px';
+                ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+            }
+            resize();
+            window.addEventListener('resize', resize);
+
+            function W() { return wrap.clientWidth; }
+            function H() { return wrap.clientHeight; }
+
+            let score = 0;
+            let strikes = 0;
+            let missedDrops = 0;
+            let ended = false;
+            let animId = null;
+            let lastTime = null;
+            let frenzyTimer = 0;
+            let spawnCooldown = 60;
+            let elapsed = 0;
+
+            const fruits = [];
+            const fruitHalves = [];
+            const particles = [];
+            const bladeTrail = [];
+            let isSwiping = false;
+            let recentSlicesInSwipe = 0;
+            let swipeTimer = 0;
+
+            // Fruit catalog
+            const FRUIT_TYPES = [
+                { type: 'watermelon', radius: 36, color: '#ef4444', outer: '#15803d', points: 10 },
+                { type: 'orange', radius: 28, color: '#f97316', outer: '#ea580c', points: 10 },
+                { type: 'strawberry', radius: 22, color: '#f43f5e', outer: '#16a34a', points: 15 },
+                { type: 'lemon', radius: 25, color: '#eab308', outer: '#ca8a04', points: 10 },
+                { type: 'starfruit', radius: 30, color: '#a855f7', outer: '#ec4899', points: 30, special: 'frenzy' },
+                { type: 'bomb', radius: 28, color: '#1e293b', outer: '#ef4444', isBomb: true }
+            ];
+
+            function addPointerPoint(clientX, clientY) {
+                const rect = canvas.getBoundingClientRect();
+                const x = clientX - rect.left;
+                const y = clientY - rect.top;
+                bladeTrail.push({ x, y, time: performance.now() });
+                checkSlice(x, y);
+            }
+
+            function onPointerDown(e) {
+                isSwiping = true;
+                recentSlicesInSwipe = 0;
+                const pt = e.touches ? e.touches[0] : e;
+                addPointerPoint(pt.clientX, pt.clientY);
+            }
+
+            function onPointerMove(e) {
+                if (!isSwiping && e.type.startsWith('touch')) isSwiping = true;
+                const pt = e.touches ? e.touches[0] : e;
+                addPointerPoint(pt.clientX, pt.clientY);
+            }
+
+            function onPointerUp() {
+                isSwiping = false;
+                if (recentSlicesInSwipe >= 3) {
+                    const comboBonus = recentSlicesInSwipe * 8;
+                    score += comboBonus;
+                    scoreEl.innerText = score;
+                    triggerScoreFloater(`COMBO x${recentSlicesInSwipe}! +${comboBonus}`, 50, 40, 'text-teal-300');
+                    playSound('fanfare');
+                }
+                recentSlicesInSwipe = 0;
+            }
+
+            canvas.addEventListener('pointerdown', onPointerDown);
+            canvas.addEventListener('pointermove', onPointerMove);
+            window.addEventListener('pointerup', onPointerUp);
+            canvas.addEventListener('touchstart', onPointerDown, { passive: true });
+            canvas.addEventListener('touchmove', onPointerMove, { passive: true });
+            window.addEventListener('touchend', onPointerUp);
+
+            function spawnWave() {
+                const count = Math.random() < 0.4 ? 3 : Math.random() < 0.7 ? 2 : 1;
+                for (let i = 0; i < count; i++) {
+                    const template = Math.random() < 0.16 ? FRUIT_TYPES[5] // bomb
+                        : Math.random() < 0.12 ? FRUIT_TYPES[4] // starfruit
+                        : FRUIT_TYPES[Math.floor(Math.random() * 4)];
+
+                    const x = W() * (0.2 + Math.random() * 0.6);
+                    const y = H() + 30;
+                    const targetX = W() * 0.5 + (Math.random() - 0.5) * (W() * 0.4);
+                    const vx = (targetX - x) / 50 + (Math.random() - 0.5) * 1.5;
+                    const vy = -12.5 - Math.random() * 4.5;
+
+                    fruits.push({
+                        ...template,
+                        x, y, vx, vy,
+                        rot: Math.random() * Math.PI * 2,
+                        rotSpeed: (Math.random() - 0.5) * 0.1,
+                        sliced: false
+                    });
+                }
+            }
+
+            function createSplash(x, y, color, count = 16) {
+                for (let i = 0; i < count; i++) {
+                    const angle = Math.random() * Math.PI * 2;
+                    const speed = 2 + Math.random() * 6;
+                    particles.push({
+                        x, y,
+                        vx: Math.cos(angle) * speed,
+                        vy: Math.sin(angle) * speed,
+                        size: 3 + Math.random() * 5,
+                        color,
+                        life: 1
+                    });
+                }
+            }
+
+            function sliceFruit(fruit, index) {
+                fruits.splice(index, 1);
+                playSound('pop', recentSlicesInSwipe);
+                createSplash(fruit.x, fruit.y, fruit.color, 20);
+
+                if (fruit.isBomb) {
+                    playSound('error');
+                    strikes++;
+                    updateStrikesUI();
+                    if (shakeEl) {
+                        shakeEl.classList.remove('animate-shake-spring');
+                        void shakeEl.offsetWidth;
+                        shakeEl.classList.add('animate-shake-spring');
+                    }
+                    triggerScoreFloater("BOMB DETONATED!", 50, 45, 'text-rose-500');
+                    if (strikes >= 3) gameOver();
+                    return;
+                }
+
+                if (fruit.special === 'frenzy') {
+                    frenzyTimer = 240; // 4 seconds
+                    frenzyBadge.classList.remove('hidden');
+                    playSound('fanfare');
+                    triggerScoreFloater("FRENZY SLOW-MO 2X!", 50, 45, 'text-pink-400');
+                }
+
+                const mult = frenzyTimer > 0 ? 2 : 1;
+                const pts = fruit.points * mult;
+                score += pts;
+                scoreEl.innerText = score;
+                recentSlicesInSwipe++;
+                triggerScoreFloater(`+${pts}`, (fruit.x / W()) * 100, (fruit.y / H()) * 100, 'text-teal-300');
+
+                // Generate two halves flying apart
+                fruitHalves.push({
+                    ...fruit,
+                    x: fruit.x - 6, y: fruit.y,
+                    vx: fruit.vx - 3.5, vy: fruit.vy - 1.5,
+                    rot: fruit.rot, rotSpeed: -0.15, half: 'left', life: 1
+                });
+                fruitHalves.push({
+                    ...fruit,
+                    x: fruit.x + 6, y: fruit.y,
+                    vx: fruit.vx + 3.5, vy: fruit.vy - 1.5,
+                    rot: fruit.rot, rotSpeed: 0.15, half: 'right', life: 1
+                });
+            }
+
+            function checkSlice(px, py) {
+                if (bladeTrail.length < 2) return;
+                const p1 = bladeTrail[bladeTrail.length - 2];
+                const p2 = bladeTrail[bladeTrail.length - 1];
+
+                for (let i = fruits.length - 1; i >= 0; i--) {
+                    const f = fruits[i];
+                    // Distance from line segment (p1, p2) to circle (f.x, f.y)
+                    const dx = p2.x - p1.x, dy = p2.y - p1.y;
+                    const lenSq = dx * dx + dy * dy;
+                    let u = lenSq === 0 ? 0 : ((f.x - p1.x) * dx + (f.y - p1.y) * dy) / lenSq;
+                    u = Math.max(0, Math.min(1, u));
+                    const closestX = p1.x + u * dx;
+                    const closestY = p1.y + u * dy;
+                    const distSq = (f.x - closestX) ** 2 + (f.y - closestY) ** 2;
+
+                    if (distSq < f.radius ** 2) {
+                        sliceFruit(f, i);
+                    }
+                }
+            }
+
+            function updateStrikesUI() {
+                for (let i = 1; i <= 3; i++) {
+                    const el = document.getElementById(`fs-strike-${i}`);
+                    if (i <= strikes) {
+                        el.className = "text-rose-500 text-lg animate-ping-once";
+                        el.innerHTML = `<i class="fa-solid fa-circle-xmark"></i>`;
+                    } else {
+                        el.className = "text-slate-600 text-lg";
+                        el.innerHTML = `<i class="fa-solid fa-xmark"></i>`;
+                    }
+                }
+            }
+
+            function gameOver() {
+                if (ended) return;
+                ended = true;
+                playSound('error');
+                if (score > appState.scores.fruitSlice) {
+                    appState.scores.fruitSlice = score;
+                    localStorage.setItem('bl_fruitSlice', score);
+                }
+                const stars = score >= 260 ? 3 : score >= 120 ? 2 : 1;
+                setTimeout(() => showResults(score + " Pts", appState.scores.fruitSlice + " Pts", startFruitSliceGame, stars), 350);
+            }
+
+            function loop(timestamp) {
+                if (lastTime === null) lastTime = timestamp;
+                const dtRaw = Math.min((timestamp - lastTime) / (1000 / 60), 2.5);
+                lastTime = timestamp;
+                const dt = frenzyTimer > 0 ? dtRaw * 0.6 : dtRaw;
+
+                if (frenzyTimer > 0) {
+                    frenzyTimer -= dtRaw;
+                    if (frenzyTimer <= 0) frenzyBadge.classList.add('hidden');
+                }
+
+                const w = W(), h = H();
+                ctx.clearRect(0, 0, w, h);
+
+                if (!ended) {
+                    elapsed += dt;
+                    spawnCooldown -= dt;
+                    if (spawnCooldown <= 0) {
+                        spawnWave();
+                        spawnCooldown = Math.max(45, 95 - elapsed / 50);
+                    }
+
+                    // Update fruits
+                    for (let i = fruits.length - 1; i >= 0; i--) {
+                        const f = fruits[i];
+                        f.x += f.vx * dt;
+                        f.y += f.vy * dt;
+                        f.vy += 0.32 * dt; // Gravity
+                        f.rot += f.rotSpeed * dt;
+
+                        // Check dropped fruit
+                        if (f.y > h + 45 && f.vy > 0) {
+                            if (!f.isBomb) {
+                                missedDrops++;
+                                if (missedDrops % 3 === 0) {
+                                    strikes++;
+                                    updateStrikesUI();
+                                    triggerScoreFloater("MISSED FRUITS ❌", 50, 80, 'text-amber-500');
+                                    if (strikes >= 3) gameOver();
+                                }
+                            }
+                            fruits.splice(i, 1);
+                        }
+                    }
+
+                    // Update halves
+                    for (let i = fruitHalves.length - 1; i >= 0; i--) {
+                        const hf = fruitHalves[i];
+                        hf.x += hf.vx * dt;
+                        hf.y += hf.vy * dt;
+                        hf.vy += 0.38 * dt;
+                        hf.rot += hf.rotSpeed * dt;
+                        hf.life -= 0.02 * dt;
+                        if (hf.y > h + 50 || hf.life <= 0) fruitHalves.splice(i, 1);
+                    }
+
+                    // Update particles
+                    for (let i = particles.length - 1; i >= 0; i--) {
+                        const p = particles[i];
+                        p.x += p.vx * dt;
+                        p.y += p.vy * dt;
+                        p.vy += 0.2 * dt;
+                        p.life -= 0.03 * dt;
+                        if (p.life <= 0) particles.splice(i, 1);
+                    }
+                }
+
+                // Render Particles
+                particles.forEach(p => {
+                    ctx.save();
+                    ctx.globalAlpha = Math.max(0, p.life);
+                    ctx.fillStyle = p.color;
+                    ctx.beginPath();
+                    ctx.arc(p.x, p.y, p.size * p.life, 0, Math.PI * 2);
+                    ctx.fill();
+                    ctx.restore();
+                });
+
+                // Render Fruits
+                fruits.forEach(f => {
+                    ctx.save();
+                    ctx.translate(f.x, f.y);
+                    ctx.rotate(f.rot);
+
+                    if (f.isBomb) {
+                        ctx.fillStyle = '#0f172a';
+                        ctx.strokeStyle = '#ef4444';
+                        ctx.lineWidth = 2.5;
+                        ctx.beginPath();
+                        ctx.arc(0, 0, f.radius, 0, Math.PI * 2);
+                        ctx.fill();
+                        ctx.stroke();
+                        // Fuse Spark
+                        ctx.fillStyle = '#f59e0b';
+                        ctx.beginPath();
+                        ctx.arc(0, -f.radius - 4, 4 + Math.sin(performance.now() * 0.02) * 2, 0, Math.PI * 2);
+                        ctx.fill();
+                    } else {
+                        // Outer rind
+                        ctx.fillStyle = f.outer;
+                        ctx.beginPath();
+                        ctx.arc(0, 0, f.radius, 0, Math.PI * 2);
+                        ctx.fill();
+                        // Inner pulp
+                        ctx.fillStyle = f.color;
+                        ctx.beginPath();
+                        ctx.arc(0, 0, f.radius * 0.82, 0, Math.PI * 2);
+                        ctx.fill();
+
+                        if (f.special === 'frenzy') {
+                            ctx.strokeStyle = '#ffffff';
+                            ctx.lineWidth = 3;
+                            ctx.stroke();
+                        }
+                    }
+                    ctx.restore();
+                });
+
+                // Render Sliced Halves
+                fruitHalves.forEach(hf => {
+                    ctx.save();
+                    ctx.translate(hf.x, hf.y);
+                    ctx.rotate(hf.rot);
+                    ctx.fillStyle = hf.color;
+                    ctx.beginPath();
+                    if (hf.half === 'left') {
+                        ctx.arc(0, 0, hf.radius, Math.PI * 0.5, Math.PI * 1.5);
+                    } else {
+                        ctx.arc(0, 0, hf.radius, -Math.PI * 0.5, Math.PI * 0.5);
+                    }
+                    ctx.closePath();
+                    ctx.fill();
+                    ctx.restore();
+                });
+
+                // Prune old blade points
+                const now = performance.now();
+                while (bladeTrail.length > 0 && now - bladeTrail[0].time > 180) {
+                    bladeTrail.shift();
+                }
+
+                // Render Blade Trail
+                if (bladeTrail.length > 1) {
+                    ctx.save();
+                    ctx.shadowColor = frenzyTimer > 0 ? '#ec4899' : '#2dd4bf';
+                    ctx.shadowBlur = 16;
+                    for (let i = 1; i < bladeTrail.length; i++) {
+                        const p1 = bladeTrail[i - 1];
+                        const p2 = bladeTrail[i];
+                        const prog = i / bladeTrail.length;
+                        ctx.strokeStyle = frenzyTimer > 0
+                            ? `rgba(244, 114, 182, ${prog})`
+                            : `rgba(45, 212, 191, ${prog})`;
+                        ctx.lineWidth = prog * 6;
+                        ctx.beginPath();
+                        ctx.moveTo(p1.x, p1.y);
+                        ctx.lineTo(p2.x, p2.y);
+                        ctx.stroke();
+                    }
+                    ctx.restore();
+                }
+
+                if (!ended) {
+                    animId = requestAnimationFrame(loop);
+                }
+            }
+            animId = requestAnimationFrame(loop);
+
+            activeGame = {
+                cleanup: () => {
+                    ended = true;
+                    cancelAnimationFrame(animId);
+                    window.removeEventListener('resize', resize);
+                    canvas.removeEventListener('pointerdown', onPointerDown);
+                    canvas.removeEventListener('pointermove', onPointerMove);
+                    window.removeEventListener('pointerup', onPointerUp);
+                    canvas.removeEventListener('touchstart', onPointerDown);
+                    canvas.removeEventListener('touchmove', onPointerMove);
+                    window.removeEventListener('touchend', onPointerUp);
+                }
+            };
         }
 
-        // Smooth drag-to-slide reveal interaction for the Imposter card
-        function setupImposterSlide(onRevealed) {
-            const wrap = document.getElementById('imp-wrap');
-            const cover = document.getElementById('imp-cover');
-            const handle = document.getElementById('imp-handle');
-            if (!wrap || !cover || !handle) return;
+        // =========================================================================
+        // 17. SNAKE RUNNER (Cyberpunk Neon Grid Synthwave Runner)
+        // =========================================================================
+        function startSnakeGame() {
+            switchView('game');
+            document.getElementById('game-title').innerText = "Snake Runner";
+            document.getElementById('btn-how-to-play-in-game').onclick = () => openHowToPlay('snake');
 
-            let dragging = false;
-            let revealed = false;
-            let startX = 0;
-
-            function maxDrag() {
-                return wrap.clientWidth - handle.offsetWidth - 16;
-            }
-
-            function setPos(x) {
-                const md = maxDrag();
-                const clamped = Math.max(0, Math.min(x, md));
-                handle.style.transform = `translate(${clamped}px, -50%)`;
-                const pct = md > 0 ? clamped / md : 0;
-                cover.style.opacity = String(1 - pct);
-            }
-
-            function openFull() {
-                if (revealed) return;
-                revealed = true;
-                const md = maxDrag();
-                handle.style.transition = 'transform 0.32s cubic-bezier(0.34,1.56,0.64,1)';
-                cover.style.transition = 'opacity 0.32s ease';
-                handle.style.transform = `translate(${md}px, -50%)`;
-                cover.style.opacity = '0';
-                cover.style.pointerEvents = 'none';
-                playSound('reveal');
-                if (onRevealed) onRevealed();
-            }
-
-            function snapClosed() {
-                handle.style.transition = 'transform 0.3s cubic-bezier(0.34,1.56,0.64,1)';
-                cover.style.transition = 'opacity 0.3s ease';
-                handle.style.transform = 'translate(0px, -50%)';
-                cover.style.opacity = '1';
-            }
-
-            handle.addEventListener('pointerdown', (e) => {
-                if (revealed) return;
-                dragging = true;
-                startX = e.clientX;
-                handle.style.transition = 'none';
-                cover.style.transition = 'none';
-                try { handle.setPointerCapture(e.pointerId); } catch (err) {}
-                playSound('pop');
-            });
-            handle.addEventListener('pointermove', (e) => {
-                if (!dragging || revealed) return;
-                const rect = wrap.getBoundingClientRect();
-                setPos(e.clientX - rect.left - 16);
-            });
-            handle.addEventListener('pointerup', (e) => {
-                if (!dragging || revealed) return;
-                dragging = false;
-                const moved = Math.abs(e.clientX - startX);
-                if (moved < 6) { openFull(); return; }
-                const md = maxDrag();
-                const rect = wrap.getBoundingClientRect();
-                const x = e.clientX - rect.left - 16;
-                if (md > 0 && x / md > 0.6) openFull(); else snapClosed();
-            });
-            handle.addEventListener('pointercancel', () => { dragging = false; });
-        }
-
-        function imposterNextPlayer() {
-            playSound('click');
-            if (imposterGame.currentIdx < imposterGame.players - 1) {
-                imposterGame.currentIdx++;
-                renderImposterPass();
-            } else {
-                renderImposterDiscussion();
-            }
-        }
-
-        function renderImposterDiscussion() {
             const stage = document.getElementById('game-stage');
-
             stage.innerHTML = `
-                <div class="w-full max-w-md flex flex-col items-center space-y-7 text-center">
-                    <div class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-cyan-500/20 border border-cyan-400/40 text-cyan-300 text-xs font-bold uppercase tracking-wider">
-                        <i class="fa-solid fa-comments"></i><span>Discussion Time</span>
+                <div id="snake-shake" class="w-full h-full flex flex-col items-center justify-between relative max-w-xl select-none">
+                    <!-- Top HUD -->
+                    <div class="w-full flex justify-between items-center bg-slate-900/90 px-5 py-2.5 rounded-full border border-green-500/30 shadow-lg mb-3">
+                        <div class="flex items-center gap-4">
+                            <div>
+                                <span class="text-[10px] text-slate-400 font-bold uppercase block">Score</span>
+                                <span id="snake-score" class="text-xl font-black font-display text-green-400">0</span>
+                            </div>
+                            <div>
+                                <span class="text-[10px] text-slate-400 font-bold uppercase block">Length</span>
+                                <span id="snake-length" class="text-xl font-black font-display text-white">3</span>
+                            </div>
+                        </div>
+                        <div id="snake-boost-badge" class="px-3.5 py-1 rounded-full bg-slate-800 text-slate-400 text-xs font-bold border border-slate-700">
+                            SPACE: Sprint
+                        </div>
                     </div>
-                    <h3 class="text-2xl font-black font-display text-white">Category: <span class="text-rose-400">${imposterGame.categoryLabel}</span></h3>
-                    <p class="text-slate-400 text-xs max-w-xs">Take turns dropping one clue about the word without saying it. Grill each other and try to find the Imposter${imposterGame.numImposters > 1 ? 's' : ''}!</p>
 
-                    <div class="w-full py-10 m3-surface rounded-4xl border border-cyan-400/30 shadow-2xl flex flex-col items-center gap-3">
-                        <i class="fa-solid fa-people-arrows text-cyan-300 text-4xl animate-float-slow"></i>
-                        <p class="text-slate-400 text-xs max-w-[220px]">Discuss out loud as a group. Tap below whenever you're ready to vote.</p>
+                    <!-- Canvas Grid Container -->
+                    <div class="w-full flex-1 max-h-[460px] aspect-[4/3] rounded-3xl overflow-hidden border-2 border-green-500/30 relative bg-slate-950 shadow-2xl">
+                        <canvas id="snake-canvas" class="w-full h-full block"></canvas>
                     </div>
 
-                    <button onclick="renderImposterVoting()" class="m3-btn w-full py-4 rounded-full bg-gradient-to-r from-rose-500 to-fuchsia-500 text-white font-black text-sm shadow-lg shadow-rose-500/30">
-                        DISCUSSION OVER — VOTE NOW
-                    </button>
+                    <!-- On-Screen D-Pad for Mobile Players -->
+                    <div class="w-full flex justify-center items-center gap-2 mt-3 pb-1">
+                        <button id="dpad-left" class="w-12 h-12 rounded-2xl bg-slate-800/90 active:bg-green-500 text-white font-black text-lg border border-slate-700 shadow-md flex items-center justify-center">
+                            <i class="fa-solid fa-arrow-left"></i>
+                        </button>
+                        <div class="flex flex-col gap-2">
+                            <button id="dpad-up" class="w-12 h-12 rounded-2xl bg-slate-800/90 active:bg-green-500 text-white font-black text-lg border border-slate-700 shadow-md flex items-center justify-center">
+                                <i class="fa-solid fa-arrow-up"></i>
+                            </button>
+                            <button id="dpad-down" class="w-12 h-12 rounded-2xl bg-slate-800/90 active:bg-green-500 text-white font-black text-lg border border-slate-700 shadow-md flex items-center justify-center">
+                                <i class="fa-solid fa-arrow-down"></i>
+                            </button>
+                        </div>
+                        <button id="dpad-right" class="w-12 h-12 rounded-2xl bg-slate-800/90 active:bg-green-500 text-white font-black text-lg border border-slate-700 shadow-md flex items-center justify-center">
+                            <i class="fa-solid fa-arrow-right"></i>
+                        </button>
+                        <button id="dpad-boost" class="ml-4 px-5 h-12 rounded-2xl bg-gradient-to-r from-emerald-500 to-green-600 active:scale-95 text-slate-950 font-black text-xs shadow-lg shadow-green-500/20 flex items-center gap-1.5">
+                            <i class="fa-solid fa-bolt"></i>
+                            <span>BOOST</span>
+                        </button>
+                    </div>
                 </div>
             `;
-        }
 
-        function renderImposterVoting() {
-            playSound('click');
-            const stage = document.getElementById('game-stage');
-            imposterGame.votedIdx = null;
+            const canvas = document.getElementById('snake-canvas');
+            const ctx = canvas.getContext('2d');
+            const wrap = canvas.parentElement;
+            const scoreEl = document.getElementById('snake-score');
+            const lengthEl = document.getElementById('snake-length');
+            const boostBadge = document.getElementById('snake-boost-badge');
+            const shakeEl = document.getElementById('snake-shake');
 
-            stage.innerHTML = `
-                <div class="w-full max-w-md flex flex-col items-center space-y-6 text-center">
-                    <div class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-fuchsia-500/20 border border-fuchsia-400/40 text-fuchsia-300 text-xs font-bold uppercase tracking-wider">
-                        <i class="fa-solid fa-hand-pointer"></i><span>Cast Your Vote</span>
-                    </div>
-                    <h3 class="text-2xl font-black font-display text-white">Who's the Imposter?</h3>
-                    <p class="text-slate-400 text-xs max-w-xs">As a group, agree on a suspect and tap their name below.</p>
+            const COLS = 22;
+            const ROWS = 16;
+            let dpr = Math.min(window.devicePixelRatio || 1, 2);
 
-                    <div class="grid grid-cols-2 gap-3 w-full" id="imp-vote-grid"></div>
-
-                    <button id="imp-vote-confirm" onclick="confirmImposterVote()" disabled class="m3-btn w-full py-4 rounded-full bg-gradient-to-r from-rose-500 to-fuchsia-500 text-white font-black text-sm shadow-lg shadow-rose-500/30 opacity-40 pointer-events-none transition-all duration-300">
-                        LOCK IN VOTE
-                    </button>
-                </div>
-            `;
-
-            const grid = document.getElementById('imp-vote-grid');
-            for (let i = 0; i < imposterGame.players; i++) {
-                const btn = document.createElement('button');
-                btn.className = "imp-vote-card m3-btn py-4 rounded-2xl bg-slate-900/80 border border-slate-700 text-white font-bold text-sm";
-                btn.innerText = `Player ${i + 1}`;
-                btn.onclick = () => selectImposterVote(i, btn);
-                grid.appendChild(btn);
+            function resize() {
+                const w = wrap.clientWidth, h = wrap.clientHeight;
+                canvas.width = w * dpr;
+                canvas.height = h * dpr;
+                canvas.style.width = w + 'px';
+                canvas.style.height = h + 'px';
+                ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
             }
-        }
+            resize();
+            window.addEventListener('resize', resize);
 
-        function selectImposterVote(idx, btnEl) {
-            playSound('pop');
-            imposterGame.votedIdx = idx;
-            document.querySelectorAll('.imp-vote-card').forEach(b => {
-                b.className = "imp-vote-card m3-btn py-4 rounded-2xl bg-slate-900/80 border border-slate-700 text-white font-bold text-sm";
-            });
-            btnEl.className = "imp-vote-card m3-btn py-4 rounded-2xl bg-gradient-to-r from-rose-500 to-fuchsia-500 border border-transparent text-white font-black text-sm shadow-lg shadow-rose-500/30 scale-[1.03]";
-            const confirmBtn = document.getElementById('imp-vote-confirm');
-            if (confirmBtn) {
-                confirmBtn.disabled = false;
-                confirmBtn.classList.remove('opacity-40', 'pointer-events-none');
+            let score = 0;
+            let ended = false;
+            let boosting = false;
+            let moveInterval = 115;
+            let lastMoveTime = 0;
+            let animId = null;
+
+            let snake = [
+                { x: 6, y: 8 },
+                { x: 5, y: 8 },
+                { x: 4, y: 8 }
+            ];
+            let dir = { x: 1, y: 0 };
+            let nextDir = { x: 1, y: 0 };
+
+            let food = { x: 14, y: 8, type: 'apple' };
+            let powerup = null;
+            let powerupTimer = 0;
+            let activePower = null;
+            let activePowerDuration = 0;
+            let particles = [];
+
+            function spawnFood() {
+                let valid = false;
+                let newX, newY;
+                while (!valid) {
+                    newX = Math.floor(Math.random() * COLS);
+                    newY = Math.floor(Math.random() * ROWS);
+                    valid = !snake.some(seg => seg.x === newX && seg.y === newY);
+                }
+                food = { x: newX, y: newY, type: 'apple' };
+
+                // Chance to spawn golden gem
+                if (!powerup && Math.random() < 0.28) {
+                    let px, py;
+                    do {
+                        px = Math.floor(Math.random() * COLS);
+                        py = Math.floor(Math.random() * ROWS);
+                    } while (snake.some(s => s.x === px && s.y === py) || (px === newX && py === newY));
+
+                    const pType = Math.random() < 0.5 ? 'gem' : 'multiplier';
+                    powerup = { x: px, y: py, type: pType, life: 180 };
+                }
             }
+
+            function setDirection(dx, dy) {
+                if (ended) return;
+                // Prevent reversing direction
+                if (dx !== 0 && dir.x === -dx) return;
+                if (dy !== 0 && dir.y === -dy) return;
+                nextDir = { x: dx, y: dy };
+            }
+
+            function handleKeyDown(e) {
+                if (['ArrowUp', 'KeyW'].includes(e.code)) { setDirection(0, -1); e.preventDefault(); }
+                else if (['ArrowDown', 'KeyS'].includes(e.code)) { setDirection(0, 1); e.preventDefault(); }
+                else if (['ArrowLeft', 'KeyA'].includes(e.code)) { setDirection(-1, 0); e.preventDefault(); }
+                else if (['ArrowRight', 'KeyD'].includes(e.code)) { setDirection(1, 0); e.preventDefault(); }
+                else if (e.code === 'Space' || e.code === 'ShiftLeft') {
+                    boosting = true;
+                    boostBadge.className = "px-3.5 py-1 rounded-full bg-green-500 text-slate-950 text-xs font-black shadow-lg shadow-green-500/40";
+                    boostBadge.innerText = "⚡ SPRINT 2X";
+                }
+            }
+
+            function handleKeyUp(e) {
+                if (e.code === 'Space' || e.code === 'ShiftLeft') {
+                    boosting = false;
+                    boostBadge.className = "px-3.5 py-1 rounded-full bg-slate-800 text-slate-400 text-xs font-bold border border-slate-700";
+                    boostBadge.innerText = "SPACE: Sprint";
+                }
+            }
+
+            window.addEventListener('keydown', handleKeyDown);
+            window.addEventListener('keyup', handleKeyUp);
+
+            // D-Pad Button bindings
+            document.getElementById('dpad-up').onclick = () => setDirection(0, -1);
+            document.getElementById('dpad-down').onclick = () => setDirection(0, 1);
+            document.getElementById('dpad-left').onclick = () => setDirection(-1, 0);
+            document.getElementById('dpad-right').onclick = () => setDirection(1, 0);
+            const boostBtn = document.getElementById('dpad-boost');
+            boostBtn.onpointerdown = () => { boosting = true; };
+            boostBtn.onpointerup = () => { boosting = false; };
+            boostBtn.onpointerleave = () => { boosting = false; };
+
+            function spawnParticles(x, y, color, count = 12) {
+                for (let i = 0; i < count; i++) {
+                    const angle = Math.random() * Math.PI * 2;
+                    const speed = 1.5 + Math.random() * 3.5;
+                    particles.push({
+                        x, y,
+                        vx: Math.cos(angle) * speed,
+                        vy: Math.sin(angle) * speed,
+                        color, life: 1, size: 2 + Math.random() * 3
+                    });
+                }
+            }
+
+            function stepGame() {
+                dir = nextDir;
+                const head = { x: snake[0].x + dir.x, y: snake[0].y + dir.y };
+
+                // Wall Collision check
+                if (head.x < 0 || head.x >= COLS || head.y < 0 || head.y >= ROWS) {
+                    gameOver();
+                    return;
+                }
+
+                // Self Collision check
+                if (snake.some(seg => seg.x === head.x && seg.y === head.y)) {
+                    gameOver();
+                    return;
+                }
+
+                snake.unshift(head);
+
+                const cellW = wrap.clientWidth / COLS;
+                const cellH = wrap.clientHeight / ROWS;
+                const headPxX = head.x * cellW + cellW / 2;
+                const headPxY = head.y * cellH + cellH / 2;
+
+                let ateFood = false;
+                const pointMultiplier = (boosting ? 2 : 1) * (activePower === 'multiplier' ? 2 : 1);
+
+                // Check Food
+                if (head.x === food.x && head.y === food.y) {
+                    ateFood = true;
+                    const pts = 10 * pointMultiplier;
+                    score += pts;
+                    scoreEl.innerText = score;
+                    lengthEl.innerText = snake.length;
+                    playSound('pop');
+                    spawnParticles(headPxX, headPxY, '#4ade80', 14);
+                    triggerScoreFloater(`+${pts}`, (headPxX / wrap.clientWidth) * 100, (headPxY / wrap.clientHeight) * 100, 'text-green-400');
+                    spawnFood();
+                }
+
+                // Check Powerup
+                if (powerup && head.x === powerup.x && head.y === powerup.y) {
+                    if (powerup.type === 'gem') {
+                        const pts = 35 * pointMultiplier;
+                        score += pts;
+                        scoreEl.innerText = score;
+                        triggerScoreFloater(`+${pts} 💎`, (headPxX / wrap.clientWidth) * 100, (headPxY / wrap.clientHeight) * 100, 'text-amber-300');
+                        playSound('fanfare');
+                        spawnParticles(headPxX, headPxY, '#facc15', 18);
+                    } else if (powerup.type === 'multiplier') {
+                        activePower = 'multiplier';
+                        activePowerDuration = 180;
+                        triggerScoreFloater("2X RUSH ACTIVE!", (headPxX / wrap.clientWidth) * 100, (headPxY / wrap.clientHeight) * 100, 'text-cyan-300');
+                        playSound('correct');
+                        spawnParticles(headPxX, headPxY, '#38bdf8', 18);
+                    }
+                    powerup = null;
+                }
+
+                if (!ateFood) {
+                    snake.pop();
+                }
+            }
+
+            function gameOver() {
+                if (ended) return;
+                ended = true;
+                playSound('error');
+                if (shakeEl) {
+                    shakeEl.classList.remove('animate-shake-spring');
+                    void shakeEl.offsetWidth;
+                    shakeEl.classList.add('animate-shake-spring');
+                }
+                const cellW = wrap.clientWidth / COLS;
+                const cellH = wrap.clientHeight / ROWS;
+                spawnParticles(snake[0].x * cellW, snake[0].y * cellH, '#ef4444', 30);
+
+                if (score > appState.scores.snake) {
+                    appState.scores.snake = score;
+                    localStorage.setItem('bl_snake', score);
+                }
+
+                const stars = score >= 240 ? 3 : score >= 100 ? 2 : 1;
+                setTimeout(() => showResults(score + " Pts", appState.scores.snake + " Pts", startSnakeGame, stars), 350);
+            }
+
+            function loop(timestamp) {
+                const cellW = wrap.clientWidth / COLS;
+                const cellH = wrap.clientHeight / ROWS;
+
+                const curInterval = boosting ? 55 : moveInterval;
+                if (!ended && timestamp - lastMoveTime > curInterval) {
+                    lastMoveTime = timestamp;
+                    stepGame();
+                }
+
+                if (activePowerDuration > 0) {
+                    activePowerDuration--;
+                    if (activePowerDuration <= 0) activePower = null;
+                }
+
+                if (powerup) {
+                    powerup.life--;
+                    if (powerup.life <= 0) powerup = null;
+                }
+
+                // Render Grid & Objects
+                ctx.clearRect(0, 0, wrap.clientWidth, wrap.clientHeight);
+
+                // Subtle Grid Background
+                ctx.strokeStyle = 'rgba(74, 222, 128, 0.06)';
+                ctx.lineWidth = 1;
+                for (let c = 0; c <= COLS; c++) {
+                    ctx.beginPath();
+                    ctx.moveTo(c * cellW, 0);
+                    ctx.lineTo(c * cellW, wrap.clientHeight);
+                    ctx.stroke();
+                }
+                for (let r = 0; r <= ROWS; r++) {
+                    ctx.beginPath();
+                    ctx.moveTo(0, r * cellH);
+                    ctx.lineTo(wrap.clientWidth, r * cellH);
+                    ctx.stroke();
+                }
+
+                // Render Food (Apple)
+                if (food) {
+                    const fx = food.x * cellW + cellW / 2;
+                    const fy = food.y * cellH + cellH / 2;
+                    ctx.save();
+                    ctx.shadowColor = '#4ade80';
+                    ctx.shadowBlur = 12;
+                    ctx.fillStyle = '#ef4444';
+                    ctx.beginPath();
+                    ctx.arc(fx, fy, cellW * 0.38, 0, Math.PI * 2);
+                    ctx.fill();
+                    // Leaf
+                    ctx.fillStyle = '#22c55e';
+                    ctx.beginPath();
+                    ctx.arc(fx + 2, fy - cellW * 0.38, 3, 0, Math.PI * 2);
+                    ctx.fill();
+                    ctx.restore();
+                }
+
+                // Render Powerup
+                if (powerup) {
+                    const px = powerup.x * cellW + cellW / 2;
+                    const py = powerup.y * cellH + cellH / 2;
+                    ctx.save();
+                    ctx.shadowColor = powerup.type === 'gem' ? '#facc15' : '#38bdf8';
+                    ctx.shadowBlur = 16;
+                    ctx.fillStyle = powerup.type === 'gem' ? '#facc15' : '#38bdf8';
+                    ctx.beginPath();
+                    ctx.arc(px, py, cellW * 0.42, 0, Math.PI * 2);
+                    ctx.fill();
+                    ctx.restore();
+                }
+
+                // Render Snake Body
+                snake.forEach((seg, index) => {
+                    const sx = seg.x * cellW + cellW / 2;
+                    const sy = seg.y * cellH + cellH / 2;
+                    const isHead = index === 0;
+
+                    ctx.save();
+                    if (isHead) {
+                        ctx.shadowColor = '#22c55e';
+                        ctx.shadowBlur = 14;
+                        ctx.fillStyle = boosting ? '#a3e635' : '#22c55e';
+                        ctx.beginPath();
+                        ctx.arc(sx, sy, cellW * 0.45, 0, Math.PI * 2);
+                        ctx.fill();
+
+                        // Head eyes
+                        ctx.fillStyle = '#0f172a';
+                        const eyeOffset = cellW * 0.18;
+                        ctx.beginPath();
+                        ctx.arc(sx + dir.x * eyeOffset - dir.y * eyeOffset, sy + dir.y * eyeOffset + dir.x * eyeOffset, 2.5, 0, Math.PI * 2);
+                        ctx.arc(sx + dir.x * eyeOffset + dir.y * eyeOffset, sy + dir.y * eyeOffset - dir.x * eyeOffset, 2.5, 0, Math.PI * 2);
+                        ctx.fill();
+                    } else {
+                        const prog = 1 - (index / snake.length) * 0.5;
+                        ctx.fillStyle = `rgba(34, 197, 94, ${prog})`;
+                        ctx.beginPath();
+                        ctx.arc(sx, sy, cellW * 0.38, 0, Math.PI * 2);
+                        ctx.fill();
+                    }
+                    ctx.restore();
+                });
+
+                // Update & Render Particles
+                for (let i = particles.length - 1; i >= 0; i--) {
+                    const p = particles[i];
+                    p.x += p.vx;
+                    p.y += p.vy;
+                    p.life -= 0.035;
+                    if (p.life <= 0) { particles.splice(i, 1); continue; }
+                    ctx.fillStyle = p.color;
+                    ctx.globalAlpha = p.life;
+                    ctx.beginPath();
+                    ctx.arc(p.x, p.y, p.size * p.life, 0, Math.PI * 2);
+                    ctx.fill();
+                    ctx.globalAlpha = 1;
+                }
+
+                if (!ended) {
+                    animId = requestAnimationFrame(loop);
+                }
+            }
+            animId = requestAnimationFrame(loop);
+
+            activeGame = {
+                cleanup: () => {
+                    ended = true;
+                    cancelAnimationFrame(animId);
+                    window.removeEventListener('resize', resize);
+                    window.removeEventListener('keydown', handleKeyDown);
+                    window.removeEventListener('keyup', handleKeyUp);
+                }
+            };
         }
 
-        function confirmImposterVote() {
-            playSound('click');
-            renderImposterReveal();
-        }
+        // =========================================================================
+        // 18. TYPING RUSH (Cyberpunk Laser Matrix Word Defense)
+        // =========================================================================
+        function startTypingRushGame() {
+            switchView('game');
+            document.getElementById('game-title').innerText = "Typing Rush";
+            document.getElementById('btn-how-to-play-in-game').onclick = () => openHowToPlay('typingRush');
 
-        function renderImposterReveal() {
-            playSound('correct');
             const stage = document.getElementById('game-stage');
-            const votedIdx = imposterGame.votedIdx;
-            const votedCorrect = votedIdx != null && imposterGame.order[votedIdx].isImposter;
-
             stage.innerHTML = `
-                <div class="w-full max-w-md flex flex-col items-center space-y-5 text-center">
-                    <i class="fa-solid ${votedCorrect ? 'fa-circle-check' : 'fa-circle-xmark'} ${votedCorrect ? 'text-emerald-400' : 'text-rose-400'} text-4xl animate-pop-in"></i>
-                    <h3 class="text-2xl font-black font-display text-white">${votedIdx == null ? 'The Word Was' : (votedCorrect ? 'Group Got It Right!' : 'The Group Was Fooled!')}</h3>
-                    <div class="px-6 py-3 rounded-3xl bg-slate-900/90 border border-rose-400/40 shadow-inner">
-                        <span class="text-xs text-slate-400 uppercase tracking-wide block mb-1">The word was</span>
-                        <span class="text-3xl font-black font-display text-rose-300">${imposterGame.word}</span>
+                <div id="tr-shake" class="w-full h-full flex flex-col items-center justify-between relative max-w-2xl select-none">
+                    <!-- Top HUD -->
+                    <div class="w-full flex justify-between items-center bg-slate-900/90 px-4 md:px-6 py-2 rounded-full border border-violet-500/30 z-10 mb-2 shadow-lg">
+                        <div class="flex items-center gap-4">
+                            <div>
+                                <span class="text-[10px] text-slate-400 font-bold uppercase block">Score</span>
+                                <span id="tr-score" class="text-xl font-black font-display text-violet-300">0</span>
+                            </div>
+                            <div>
+                                <span class="text-[10px] text-slate-400 font-bold uppercase block">WPM</span>
+                                <span id="tr-wpm" class="text-xl font-black font-display text-white">0</span>
+                            </div>
+                        </div>
+                        <div class="flex items-center gap-3">
+                            <div id="tr-combo-badge" class="px-3 py-1 rounded-full bg-violet-500/20 border border-violet-500/40 text-violet-300 text-xs font-black">
+                                1x STREAK
+                            </div>
+                            <!-- Shield HP -->
+                            <div class="flex items-center gap-1">
+                                <span id="tr-shield-1" class="text-violet-400 text-base"><i class="fa-solid fa-shield"></i></span>
+                                <span id="tr-shield-2" class="text-violet-400 text-base"><i class="fa-solid fa-shield"></i></span>
+                                <span id="tr-shield-3" class="text-violet-400 text-base"><i class="fa-solid fa-shield"></i></span>
+                            </div>
+                        </div>
                     </div>
-                    <div class="grid grid-cols-1 gap-2 w-full" id="imp-reveal-list"></div>
-                    <button onclick="finishImposterRound()" class="m3-btn w-full py-4 rounded-full bg-gradient-to-r from-m3-primary via-m3-tertiary to-m3-secondary text-white font-black text-sm shadow-lg shadow-purple-500/30">
-                        FINISH ROUND
-                    </button>
+
+                    <!-- Cyber Defense Matrix Canvas Arena -->
+                    <div class="w-full flex-1 rounded-3xl overflow-hidden border border-violet-500/30 relative bg-gradient-to-b from-slate-950 via-purple-950/20 to-slate-950 shadow-2xl min-h-[360px]">
+                        <canvas id="tr-canvas" class="w-full h-full block"></canvas>
+                        <!-- Bottom Laser Defense Line -->
+                        <div class="absolute inset-x-0 bottom-6 h-0.5 bg-gradient-to-r from-transparent via-violet-500 to-transparent shadow-lg shadow-violet-500/50"></div>
+                    </div>
+
+                    <!-- Active Input Bar -->
+                    <div class="w-full flex items-center gap-3 mt-3">
+                        <div class="flex-1 relative">
+                            <input id="tr-input" type="text" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"
+                                placeholder="Type the falling words here..."
+                                class="w-full px-6 py-3.5 rounded-full bg-slate-900 border-2 border-violet-500/40 text-white font-mono font-bold text-center tracking-widest focus:outline-none focus:border-violet-400 focus:ring-4 focus:ring-violet-500/20 shadow-inner" />
+                        </div>
+                    </div>
                 </div>
             `;
 
-            const list = document.getElementById('imp-reveal-list');
-            imposterGame.order.forEach((p, i) => {
-                const row = document.createElement('div');
-                const isVoted = i === votedIdx;
-                row.className = `flex items-center justify-between px-4 py-3 rounded-2xl border font-bold text-sm opacity-0 ${p.isImposter ? 'bg-rose-500/15 border-rose-400/50 text-rose-300' : 'bg-slate-900/70 border-slate-700 text-slate-300'}`;
-                row.style.animation = `popIn 0.4s cubic-bezier(0.175,0.885,0.32,1.275) forwards`;
-                row.style.animationDelay = `${i * 0.12}s`;
-                row.innerHTML = `<span>Player ${i + 1}${isVoted ? ' <span class="text-fuchsia-400">(Voted)</span>' : ''}</span><span>${p.isImposter ? '🕵️ IMPOSTER' : '✅ Innocent'}</span>`;
-                list.appendChild(row);
-                setTimeout(() => playSound(p.isImposter ? 'error' : 'pop'), i * 120);
-            });
-        }
+            const canvas = document.getElementById('tr-canvas');
+            const ctx = canvas.getContext('2d');
+            const wrap = canvas.parentElement;
+            const inputEl = document.getElementById('tr-input');
+            const scoreEl = document.getElementById('tr-score');
+            const wpmEl = document.getElementById('tr-wpm');
+            const comboBadge = document.getElementById('tr-combo-badge');
+            const shakeEl = document.getElementById('tr-shake');
 
-        function finishImposterRound() {
-            appState.scores.imposter = (appState.scores.imposter || 0) + 1;
-            localStorage.setItem('bl_imposter', appState.scores.imposter);
-            const votedCorrect = imposterGame.votedIdx != null && imposterGame.order[imposterGame.votedIdx].isImposter;
-            const scoreText = imposterGame.votedIdx == null ? 'Round Complete' : (votedCorrect ? 'Imposter Caught!' : 'Imposter Escaped!');
-            showResults(scoreText, appState.scores.imposter + " Rounds Played", startImposterSetup, 3);
+            let dpr = Math.min(window.devicePixelRatio || 1, 2);
+            function resize() {
+                const w = wrap.clientWidth, h = wrap.clientHeight;
+                canvas.width = w * dpr;
+                canvas.height = h * dpr;
+                canvas.style.width = w + 'px';
+                canvas.style.height = h + 'px';
+                ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+            }
+            resize();
+            window.addEventListener('resize', resize);
+
+            inputEl.focus();
+
+            // Tech / Cyber Word Library
+            const WORD_BANK = [
+                "CYBER", "NEON", "MATRIX", "PULSE", "LASER", "SPEED", "BYTE", "ORBIT",
+                "TURBO", "QUANTUM", "SIGNAL", "SPARK", "VORTEX", "ENERGY", "PIXEL", "SYNTH",
+                "GRID", "FALCON", "COSMOS", "HYPER", "SHIELD", "BLAZE", "ROBOT", "VECTOR",
+                "STELLAR", "ALPHA", "CHROMA", "NEXUS", "FUSION", "PRISM", "RADAR", "FLUX"
+            ];
+
+            let score = 0;
+            let streak = 0;
+            let multiplier = 1;
+            let shields = 3;
+            let totalWordsTyped = 0;
+            let startTime = performance.now();
+            let ended = false;
+            let animId = null;
+            let lastTime = null;
+            let spawnCooldown = 60;
+            let elapsed = 0;
+
+            let activeWords = [];
+            let laserBeams = [];
+            let particles = [];
+
+            function spawnWord() {
+                const text = WORD_BANK[Math.floor(Math.random() * WORD_BANK.length)];
+                // Ensure word doesn't already exist on screen
+                if (activeWords.some(w => w.text === text)) return;
+
+                const colWidth = wrap.clientWidth - 140;
+                const x = 70 + Math.random() * colWidth;
+                const speed = 0.65 + Math.min(elapsed / 1200, 1.4);
+
+                activeWords.push({
+                    text,
+                    x,
+                    y: 10,
+                    speed,
+                    matchedChars: 0
+                });
+            }
+
+            function updateShieldUI() {
+                for (let i = 1; i <= 3; i++) {
+                    const el = document.getElementById(`tr-shield-${i}`);
+                    if (i <= shields) {
+                        el.className = "text-violet-400 text-base";
+                    } else {
+                        el.className = "text-slate-700 text-base";
+                    }
+                }
+            }
+
+            function updateStreakUI() {
+                if (multiplier > 1) {
+                    comboBadge.innerText = `${multiplier}x OVERDRIVE 🔥`;
+                    comboBadge.className = "px-3 py-1 rounded-full bg-gradient-to-r from-violet-500 to-fuchsia-500 text-white text-xs font-black shadow-lg shadow-violet-500/30 scale-105";
+                } else {
+                    comboBadge.innerText = `${multiplier}x STREAK`;
+                    comboBadge.className = "px-3 py-1 rounded-full bg-violet-500/20 border border-violet-500/40 text-violet-300 text-xs font-black";
+                }
+            }
+
+            function spawnCyberExplosion(x, y, color) {
+                for (let i = 0; i < 22; i++) {
+                    const angle = Math.random() * Math.PI * 2;
+                    const speed = 2 + Math.random() * 5;
+                    particles.push({
+                        x, y,
+                        vx: Math.cos(angle) * speed,
+                        vy: Math.sin(angle) * speed,
+                        color, life: 1, size: 2 + Math.random() * 4
+                    });
+                }
+            }
+
+            function handleInput() {
+                if (ended) return;
+                const query = inputEl.value.trim().toUpperCase();
+
+                // Find matching word
+                const matchedIndex = activeWords.findIndex(w => w.text === query);
+
+                if (matchedIndex !== -1) {
+                    const w = activeWords[matchedIndex];
+                    activeWords.splice(matchedIndex, 1);
+                    inputEl.value = '';
+
+                    // Fire Laser Beam from bottom turret to word location
+                    laserBeams.push({
+                        x1: wrap.clientWidth / 2, y1: wrap.clientHeight - 20,
+                        x2: w.x, y2: w.y,
+                        life: 1
+                    });
+
+                    spawnCyberExplosion(w.x, w.y, '#c084fc');
+                    playSound('correct', streak);
+
+                    streak++;
+                    if (streak % 3 === 0) multiplier = Math.min(5, multiplier + 1);
+                    updateStreakUI();
+
+                    totalWordsTyped++;
+                    const pts = w.text.length * 10 * multiplier;
+                    score += pts;
+                    scoreEl.innerText = score;
+                    triggerScoreFloater(`+${pts}`, (w.x / wrap.clientWidth) * 100, (w.y / wrap.clientHeight) * 100, 'text-violet-300');
+                } else {
+                    playSound('click');
+                }
+            }
+
+            inputEl.addEventListener('input', handleInput);
+
+            function gameOver() {
+                if (ended) return;
+                ended = true;
+                playSound('error');
+
+                if (score > appState.scores.typingRush) {
+                    appState.scores.typingRush = score;
+                    localStorage.setItem('bl_typingRush', score);
+                }
+
+                const minutes = (performance.now() - startTime) / 60000;
+                const finalWpm = Math.round(totalWordsTyped / Math.max(0.1, minutes));
+                const stars = score >= 300 ? 3 : score >= 140 ? 2 : 1;
+
+                setTimeout(() => {
+                    showResults(`${score} Pts (${finalWpm} WPM)`, appState.scores.typingRush + " Pts", startTypingRushGame, stars);
+                }, 350);
+            }
+
+            function loop(timestamp) {
+                if (lastTime === null) lastTime = timestamp;
+                const dt = Math.min((timestamp - lastTime) / (1000 / 60), 2.5);
+                lastTime = timestamp;
+
+                const w = wrap.clientWidth, h = wrap.clientHeight;
+                ctx.clearRect(0, 0, w, h);
+
+                if (!ended) {
+                    elapsed += dt;
+                    spawnCooldown -= dt;
+                    if (spawnCooldown <= 0) {
+                        spawnWord();
+                        spawnCooldown = Math.max(50, 110 - elapsed / 50);
+                    }
+
+                    // Update live WPM
+                    const minutes = (performance.now() - startTime) / 60000;
+                    const curWpm = Math.round(totalWordsTyped / Math.max(0.1, minutes));
+                    wpmEl.innerText = curWpm;
+
+                    // Update words
+                    for (let i = activeWords.length - 1; i >= 0; i--) {
+                        const word = activeWords[i];
+                        word.y += word.speed * dt;
+
+                        // Check defense barrier breach
+                        if (word.y >= h - 40) {
+                            activeWords.splice(i, 1);
+                            shields--;
+                            updateShieldUI();
+                            streak = 0;
+                            multiplier = 1;
+                            updateStreakUI();
+                            playSound('error');
+                            spawnCyberExplosion(word.x, word.y, '#ef4444');
+                            if (shakeEl) {
+                                shakeEl.classList.remove('animate-shake-spring');
+                                void shakeEl.offsetWidth;
+                                shakeEl.classList.add('animate-shake-spring');
+                            }
+                            triggerScoreFloater("SHIELD BREACHED! ❌", 50, 75, 'text-rose-500');
+                            if (shields <= 0) gameOver();
+                        }
+                    }
+                }
+
+                // Render Falling Word Badges
+                const curInput = inputEl.value.trim().toUpperCase();
+
+                activeWords.forEach(wordObj => {
+                    const isPrefix = curInput.length > 0 && wordObj.text.startsWith(curInput);
+
+                    ctx.save();
+                    ctx.font = 'bold 15px monospace';
+                    const textWidth = ctx.measureText(wordObj.text).width;
+                    const boxW = textWidth + 24;
+                    const boxH = 32;
+                    const boxX = wordObj.x - boxW / 2;
+                    const boxY = wordObj.y - boxH / 2;
+
+                    // Background Pill Box
+                    ctx.shadowColor = isPrefix ? '#c084fc' : 'rgba(168, 85, 247, 0.4)';
+                    ctx.shadowBlur = isPrefix ? 16 : 8;
+                    ctx.fillStyle = isPrefix ? 'rgba(88, 28, 135, 0.95)' : 'rgba(15, 23, 42, 0.85)';
+                    ctx.strokeStyle = isPrefix ? '#e879f9' : 'rgba(168, 85, 247, 0.5)';
+                    ctx.lineWidth = isPrefix ? 2.5 : 1.5;
+
+                    ctx.beginPath();
+                    ctx.roundRect(boxX, boxY, boxW, boxH, 12);
+                    ctx.fill();
+                    ctx.stroke();
+
+                    // Render Text
+                    ctx.textAlign = 'center';
+                    ctx.textBaseline = 'middle';
+
+                    if (isPrefix) {
+                        ctx.fillStyle = '#f0abfc';
+                    } else {
+                        ctx.fillStyle = '#e2e8f0';
+                    }
+                    ctx.fillText(wordObj.text, wordObj.x, wordObj.y);
+                    ctx.restore();
+                });
+
+                // Render Laser Beams
+                for (let i = laserBeams.length - 1; i >= 0; i--) {
+                    const beam = laserBeams[i];
+                    beam.life -= 0.1 * dt;
+                    if (beam.life <= 0) { laserBeams.splice(i, 1); continue; }
+
+                    ctx.save();
+                    ctx.strokeStyle = `rgba(216, 180, 254, ${beam.life})`;
+                    ctx.lineWidth = beam.life * 6;
+                    ctx.shadowColor = '#d8b4fe';
+                    ctx.shadowBlur = 18;
+                    ctx.beginPath();
+                    ctx.moveTo(beam.x1, beam.y1);
+                    ctx.lineTo(beam.x2, beam.y2);
+                    ctx.stroke();
+                    ctx.restore();
+                }
+
+                // Render Particles
+                for (let i = particles.length - 1; i >= 0; i--) {
+                    const p = particles[i];
+                    p.x += p.vx * dt;
+                    p.y += p.vy * dt;
+                    p.life -= 0.035 * dt;
+                    if (p.life <= 0) { particles.splice(i, 1); continue; }
+                    ctx.fillStyle = p.color;
+                    ctx.globalAlpha = Math.max(0, p.life);
+                    ctx.beginPath();
+                    ctx.arc(p.x, p.y, p.size * p.life, 0, Math.PI * 2);
+                    ctx.fill();
+                    ctx.globalAlpha = 1;
+                }
+
+                // Render Bottom Turret Cannon
+                ctx.save();
+                ctx.fillStyle = '#a855f7';
+                ctx.shadowColor = '#c084fc';
+                ctx.shadowBlur = 14;
+                ctx.beginPath();
+                ctx.arc(w / 2, h - 10, 16, Math.PI, 0);
+                ctx.fill();
+                ctx.restore();
+
+                if (!ended) {
+                    animId = requestAnimationFrame(loop);
+                }
+            }
+            animId = requestAnimationFrame(loop);
+
+            activeGame = {
+                cleanup: () => {
+                    ended = true;
+                    cancelAnimationFrame(animId);
+                    window.removeEventListener('resize', resize);
+                    inputEl.removeEventListener('input', handleInput);
+                }
+            };
         }
 
         // Initialize App Hub Stats on Load
