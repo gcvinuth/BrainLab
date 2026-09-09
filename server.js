@@ -225,6 +225,28 @@ server.on('upgrade', (req, socket, head) => {
     });
 });
 
+// Send a WebSocket PING frame (opcode 0x09) to every connected client.
+// Keeps connections alive through hosting-platform proxies (Render,
+// Railway, etc.) that close sockets after ~55-60s of total silence, and
+// lets us prune dead sockets that never got a close event.
+function sendWebSocketPing(socket) {
+    if (!socket.writable) return;
+    try {
+        socket.write(Buffer.from([0x89, 0x00])); // FIN + opcode 0x9, zero-length payload
+    } catch (e) {}
+}
+
+setInterval(() => {
+    for (const socket of clients.keys()) {
+        if (socket.writable) {
+            sendWebSocketPing(socket);
+        } else {
+            handleDisconnect(socket);
+            clients.delete(socket);
+        }
+    }
+}, 25000);
+
 function sendWebSocketFrame(socket, text) {
     if (!socket.writable) return;
     const payload = Buffer.from(text, 'utf8');
